@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const routes = require("./routes");
 const { connectionDatabase } = require("./config/database");
 
 const app = express();
@@ -22,10 +23,8 @@ app.use(express.json());
 // Middleware: Parse requests with x-www-form-urlencoded content type
 app.use(express.urlencoded({ extended: true }));
 
-// // Routes
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+// Routes
+app.use('/api/v1', routes);
 
 connectionDatabase();
 
