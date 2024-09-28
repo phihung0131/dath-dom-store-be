@@ -7,9 +7,9 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
-let PORT = "";
+let domain = `http://${process.env.HOSTNAME}`;
 if (process.env.HOST === "localhost") {
-  PORT = process.env.PORT;
+  domain = domain + `:${process.env.PORT}`;
 }
 
 async function findOrCreateUser(profile, provider) {
@@ -65,7 +65,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: `http://${process.env.HOSTNAME}:${PORT}/api/v1/auth/facebook/callback`,
+      callbackURL: `${domain}/api/v1/auth/facebook/callback`,
       profileFields: ["id", "emails", "name"],
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -85,7 +85,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `http://${process.env.HOSTNAME}:${PORT}/api/v1/auth/google/callback`,
+      callbackURL: `${domain}/api/v1/auth/google/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
