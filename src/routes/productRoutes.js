@@ -41,7 +41,7 @@ module.exports = router;
  *           type: integer
  *         description: Số sản phẩm trong 1 trang
  *     responses:
- *       '200':
+ *       'XXX':
  *         description: Lấy sản phẩm thành công
  *         content:
  *           application/json:
@@ -50,10 +50,8 @@ module.exports = router;
  *               properties:
  *                 status:
  *                   type: string
- *                   example: success
  *                 message:
  *                   type: string
- *                   example: Lấy sản phẩm thành công
  *                 data:
  *                   type: array
  *                   items:
@@ -96,7 +94,7 @@ module.exports = router;
  *         description: Khoảng giá sản phẩm cần tìm
  *         example: 1000-200000
  *     responses:
- *       '200':
+ *       'XXX':
  *         description: Lấy sản phẩm thành công
  *         content:
  *           application/json:
@@ -105,10 +103,8 @@ module.exports = router;
  *               properties:
  *                 status:
  *                   type: string
- *                   example: success
  *                 message:
  *                   type: string
- *                   example: Lấy sản phẩm thành công
  *                 data:
  *                   type: array
  *                   items:
@@ -130,7 +126,7 @@ module.exports = router;
  *         require: true
  *         example: 66f6405f15cc467edadcd480
  *     responses:
- *       '200':
+ *       'XXX':
  *         description: Lấy sản phẩm thành công
  *         content:
  *           application/json:
@@ -139,10 +135,8 @@ module.exports = router;
  *               properties:
  *                 status:
  *                   type: string
- *                   example: success
  *                 message:
  *                   type: string
- *                   example: Lấy sản phẩm thành công
  *                 data:
  *                   type: array
  *                   items:
