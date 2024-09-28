@@ -8,7 +8,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 let domain = `http://${process.env.HOSTNAME}`;
-if (process.env.HOST === "localhost") {
+if (process.env.HOSTNAME == "localhost") {
   domain = domain + `:${process.env.PORT}`;
 }
 
