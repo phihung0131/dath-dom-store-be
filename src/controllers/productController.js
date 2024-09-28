@@ -2,6 +2,7 @@ const sendResponse = require("../helper/sendResponse");
 const Product = require("../models/Product");
 const Category = require("../models/Category");
 const { connectionDatabase } = require("../config/database");
+require("dotenv").config();
 
 const productsController = {
   // Lấy danh sách tất cả sản phẩm
@@ -34,8 +35,13 @@ const productsController = {
     //     });
     //   }
     try {
-      connectionDatabase();
-      res.send("Done");
+      res.send(
+        process.env.PORT,
+        process.env.DB_URI,
+        process.env.DB_NAME,
+        process.env.DB_USER,
+        process.env.DB_PASS
+      );
     } catch (error) {
       console.log(error.toString());
     }
