@@ -7,44 +7,33 @@ require("dotenv").config();
 const productsController = {
   // Lấy danh sách tất cả sản phẩm
   getAllProducts: async (req, res) => {
-    //   try {
-    //     const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định 1)
-    //     const limit = parseInt(req.query.limit) || 10; // Số lượng sản phẩm trên mỗi trang (mặc định 10)
-    //     const skip = (page - 1) * limit; // Bỏ qua các sản phẩm trước trang hiện tại
+      try {
+        const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định 1)
+        const limit = parseInt(req.query.limit) || 10; // Số lượng sản phẩm trên mỗi trang (mặc định 10)
+        const skip = (page - 1) * limit; // Bỏ qua các sản phẩm trước trang hiện tại
 
-    //     // Lấy tất cả sản phẩm theo phân trang
-    //     const products = await Product.find()
-    //       .sort({ createdAt: -1 }) // Sắp xếp theo ngày tạo từ mới nhất đến cũ nhất
-    //       .skip(skip)
-    //       .limit(limit)
-    //       .select("-infos -deleted -createdAt -updatedAt -__v")
-    //       .populate({ path: "category", select: "name -_id" });
+        // Lấy tất cả sản phẩm theo phân trang
+        const products = await Product.find()
+          .sort({ createdAt: -1 }) // Sắp xếp theo ngày tạo từ mới nhất đến cũ nhất
+          .skip(skip)
+          .limit(limit)
+          .select("-infos -deleted -createdAt -updatedAt -__v")
+          .populate({ path: "category", select: "name -_id" });
 
-    //     // Tổng số lượng sản phẩm
-    //     const total = await Product.countDocuments();
-    //     sendResponse(res, 200, "Lấy dữ liệu Product thành công", {
-    //       currentPage: page,
-    //       totalPages: Math.ceil(total / limit),
-    //       totalItems: total,
-    //       products,
-    //     });
-    //     // Trả về kết quả
-    //   } catch (error) {
-    //     sendResponse(res, 500, "Có lỗi xảy ra khi lấy dữ liệu Product", {
-    //       error,
-    //     });
-    //   }
-    try {
-      res.send(
-        process.env.PORT,
-        process.env.DB_URI,
-        process.env.DB_NAME,
-        process.env.DB_USER,
-        process.env.DB_PASS
-      );
-    } catch (error) {
-      console.log(error.toString());
-    }
+        // Tổng số lượng sản phẩm
+        const total = await Product.countDocuments();
+        sendResponse(res, 200, "Lấy dữ liệu Product thành công", {
+          currentPage: page,
+          totalPages: Math.ceil(total / limit),
+          totalItems: total,
+          products,
+        });
+        // Trả về kết quả
+      } catch (error) {
+        sendResponse(res, 500, "Có lỗi xảy ra khi lấy dữ liệu Product", {
+          error,
+        });
+      }
   },
 
   // Tìm kiếm và lọc sản phẩm theo các tiêu chí
