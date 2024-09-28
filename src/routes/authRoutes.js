@@ -55,3 +55,154 @@ router.get("/login", isAuthenticated, authController.loginSuccess);
 // End test
 
 module.exports = router;
+
+/**
+ * @swagger
+ * /api/v1/register:
+ *   post:
+ *     summary: Đăng kí
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: 456
+ *               password:
+ *                 type: string
+ *                 example: 456
+ *               name:
+ *                 type: string
+ *                 example: 456
+ *               address:
+ *                 type: string
+ *                 example: 456
+ *               email:
+ *                 type: string
+ *                 example: 456
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/login:
+ *   post:
+ *     summary: Đăng nhập local (Dùng tài khoản và mật khẩu bình thường)
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: 456
+ *               password:
+ *                 type: string
+ *                 example: 456
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/auth/facebook:
+ *   get:
+ *     summary: Đăng nhập facebook (test trên trình duyệt, test trên đây không được đâu)
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/auth/google:
+ *   get:
+ *     summary: Đăng nhập google (test trên trình duyệt, test trên đây không được đâu)
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/logout:
+ *   get:
+ *     summary: Đăng xuất
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */

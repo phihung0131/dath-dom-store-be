@@ -42,7 +42,6 @@ module.exports = router;
  *         description: Số sản phẩm trong 1 trang
  *     responses:
  *       'XXX':
- *         description: Lấy sản phẩm thành công
  *         content:
  *           application/json:
  *             schema:
@@ -95,7 +94,6 @@ module.exports = router;
  *         example: 1000-200000
  *     responses:
  *       'XXX':
- *         description: Lấy sản phẩm thành công
  *         content:
  *           application/json:
  *             schema:
@@ -127,7 +125,6 @@ module.exports = router;
  *         example: 66f6405f15cc467edadcd480
  *     responses:
  *       'XXX':
- *         description: Lấy sản phẩm thành công
  *         content:
  *           application/json:
  *             schema:
