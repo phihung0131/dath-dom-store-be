@@ -95,9 +95,16 @@ const productsController = {
         product
       );
     } catch (error) {
-      sendResponse(res, 500, "Có lỗi xảy ra khi lấy dữ liệu Product", {
-        error,
-      });
+      console.error("Lỗi khi lấy dữ liệu Product:", error);
+      sendResponse(
+        res,
+        500,
+        `Có lỗi xảy ra khi lấy dữ liệu Product: ${error.message}`,
+        {
+          error: error.toString(),
+          stack: error.stack,
+        }
+      );
     }
   },
 
