@@ -1,9 +1,12 @@
 const express = require("express");
 const cors = require("cors");
+const session = require('express-session');
+const passport = require('./src/config/passport');
 require("dotenv").config();
 const setupSwaggerDocs = require("./src/docs/api");
 const routes = require("./src/routes");
 const { connectionDatabase } = require("./src/config/database");
+
 
 const app = express();
 
@@ -22,6 +25,15 @@ app.use(express.json());
 
 // Middleware: Parse requests with x-www-form-urlencoded content type
 app.use(express.urlencoded({ extended: true }));
+
+app.use(session({
+  secret: 'dom-store-project',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routes
 app.use("/api/v1", routes);
