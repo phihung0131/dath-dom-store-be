@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-
+const setupSwaggerDocs = require("./src/docs/api");
 const routes = require("./src/routes");
 const { connectionDatabase } = require("./src/config/database");
 
@@ -26,6 +26,10 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api/v1", routes);
 
+// API Document
+setupSwaggerDocs(app, port);
+
+// Connect to the database
 connectionDatabase();
 
 // Start the server
