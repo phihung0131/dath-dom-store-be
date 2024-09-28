@@ -118,7 +118,7 @@ module.exports = router;
  * @swagger
  * /api/v1/products/{id}:
  *   get:
- *     summary: Lấy tất cả sản phẩm với phân trang
+ *     summary: Lấy chi tiết sản phẩm theo ID
  *     tags:
  *       - Products
  *     parameters:
