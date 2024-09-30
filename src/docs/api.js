@@ -16,7 +16,7 @@ const options = {
         ApiKeyAuth: {
           type: "apiKey",
           in: "header",
-          name: "x-access-token",
+          name: "Authorization",
         },
       },
     },

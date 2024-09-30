@@ -1,10 +1,16 @@
-const passport = require("passport");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const sendResponse = require("../helper/sendResponse");
 const User = require("../models/User");
 
 require("dotenv").config();
+
+const generateToken = (user) => {
+  return jwt.sign({ ...user._doc }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+};
 
 const authController = {
   register: async (req, res) => {
@@ -19,7 +25,8 @@ const authController = {
         password: hashedPassword,
       });
       await user.save();
-      sendResponse(res, 201, "Đăng kí người dùng thành công", user);
+      const token = generateToken(user);
+      sendResponse(res, 201, "Đăng kí người dùng thành công", { user, token });
     } catch (error) {
       sendResponse(res, 500, `Lỗi đăng kí người dùng mới`, {
         error: error.toString(),
@@ -28,17 +35,9 @@ const authController = {
     }
   },
 
-  logout: (req, res) => {
-    req.logout((err) => {
-      if (err) {
-        sendResponse(res, 500, "Lỗi đăng xuất", { error: err.toString() });
-      }
-      sendResponse(res, 200, "Đăng xuất thành công");
-    });
-  },
-
   loginSuccess: (req, res) => {
-    sendResponse(res, 200, "Đăng nhập thành công", req.user);
+    const token = generateToken(req.user);
+    sendResponse(res, 200, "Đăng nhập thành công", { user: req.user, token });
   },
 };
 
