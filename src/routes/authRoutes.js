@@ -40,10 +40,12 @@ router.get(
   })
 );
 router.get("/auth/google/callback", (req, res, next) => {
+  console.log("Entering Google auth callback");
   passport.authenticate(
     "google",
     { session: false },
     async (err, user, info) => {
+      console.log("Inside passport.authenticate callback");
       if (err) {
         console.error("Error during authentication:", err);
         return next(err);
@@ -53,8 +55,16 @@ router.get("/auth/google/callback", (req, res, next) => {
         return res.redirect("/login");
       }
 
+      console.log("User found:", user);
       req.user = user;
-      return authController.loginSuccess(req, res);
+      
+      try {
+        console.log("Calling authController.loginSuccess");
+        return authController.loginSuccess(req, res);
+      } catch (error) {
+        console.error("Error in loginSuccess:", error);
+        return next(error);
+      }
     }
   )(req, res, next);
 });

@@ -36,15 +36,14 @@ const authController = {
   },
 
   loginSuccess: (req, res) => {
+    console.log("Entering loginSuccess");
     const token = generateToken(req.user);
-    console.log(token);
+    console.log("Generated token:", token);
 
-    // Chuyển hướng về frontend với token trong URL
     const frontendUrl = `${process.env.FRONTEND_URL_TOKEN}?token=${token}`;
+    console.log("Redirecting to:", frontendUrl);
 
     res.redirect(frontendUrl);
-
-    // sendResponse(res, 200, "Đăng nhập thành công", { user: req.user, token });
   },
 
   test: (req, res) => {
