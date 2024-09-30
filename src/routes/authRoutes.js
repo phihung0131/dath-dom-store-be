@@ -39,14 +39,20 @@ router.get(
     scope: ["profile", "email"],
   })
 );
-router.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
-    session: false,
-    failureRedirect: "/login",
-  }),
-  authController.loginSuccess
-);
+router.get("/auth/google/callback", (req, res, next) => {
+  passport.authenticate("google", { session: false }, async (err, user, info) => {
+    if (err) {
+      return next(err); // Nếu có lỗi, chuyển đến middleware xử lý lỗi
+    }
+    if (!user) {
+      return res.redirect("/login"); // Chuyển hướng đến trang đăng nhập nếu không tìm thấy người dùng
+    }
+
+    // Nếu xác thực thành công, gọi hàm loginSuccess của bạn
+    req.user = user; // Đặt người dùng vào req để sử dụng trong loginSuccess
+    return authController.loginSuccess(req, res); // Gọi hàm loginSuccess
+  })(req, res, next);
+});
 
 //Test
 router.get(
