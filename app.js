@@ -36,7 +36,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use("/api/v1", routes);
+app.use("/api/v1", routes); 
 
 // API Document
 setupSwaggerDocs(app, port);
