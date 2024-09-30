@@ -52,17 +52,17 @@ router.get(
 router.get(
   "/login/customer",
   [authMiddleware.verifyToken, authMiddleware.isCustomer],
-  authController.loginSuccess
+  authController.test
 );
 router.get(
   "/login/admin",
   [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
-  authController.loginSuccess
+  authController.test
 );
 router.get(
   "/login/owner",
   [authMiddleware.verifyToken, authMiddleware.isOwner],
-  authController.loginSuccess
+  authController.test
 );
 
 module.exports = router;
@@ -178,6 +178,81 @@ module.exports = router;
  *     summary: Đăng nhập google (test trên trình duyệt, test trên đây không được đâu)
  *     tags:
  *       - Auth
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/login/customer:
+ *   get:
+ *     summary: Test xem đăng nhập đã thành công hay chưa
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: [] # Kết nối security scheme với API
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/login/admin:
+ *   get:
+ *     summary: Test xem đăng nhập đã thành công hay chưa
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: [] # Kết nối security scheme với API
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/login/owner:
+ *   get:
+ *     summary: Test xem đăng nhập đã thành công hay chưa
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: [] # Kết nối security scheme với API
  *     responses:
  *       'XXX':
  *         content:

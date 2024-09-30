@@ -13,16 +13,17 @@ const options = {
     },
     components: {
       securitySchemes: {
-        ApiKeyAuth: {
-          type: "apiKey",
-          in: "header",
-          name: "Authorization",
+        bearerAuth: {
+          // Đổi tên thành bearerAuth để phù hợp với tiêu chuẩn Bearer Token
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT", // Thêm bearerFormat để chỉ rõ loại token
         },
       },
     },
     security: [
       {
-        ApiKeyAuth: [],
+        bearerAuth: [], // Áp dụng security scheme cho toàn bộ API
       },
     ],
   },
