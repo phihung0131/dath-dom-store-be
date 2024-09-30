@@ -1,6 +1,5 @@
 const passport = require("passport");
 require("dotenv").config();
-
 const LocalStrategy = require("passport-local").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
@@ -16,7 +15,6 @@ async function findOrCreateUser(profile, provider) {
   let user = await User.findOne({ email: profile.emails[0].value });
 
   if (user) {
-    // Kiểm tra xem tài khoản xã hội này đã được liên kết chưa
     const existingAccount = user.socialAccounts.find(
       (account) => account.provider === provider
     );
@@ -25,7 +23,6 @@ async function findOrCreateUser(profile, provider) {
       await user.save();
     }
   } else {
-    // Tạo người dùng mới
     user = new User({
       name:
         provider === "facebook"
@@ -42,7 +39,7 @@ async function findOrCreateUser(profile, provider) {
 
 // Local Strategy
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
+  new LocalStrategy({ session: false }, async (username, password, done) => {
     try {
       const user = await User.findOne({ username });
       if (!user) {
@@ -97,18 +94,5 @@ passport.use(
     }
   )
 );
-
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (err) {
-    done(err);
-  }
-});
 
 module.exports = passport;

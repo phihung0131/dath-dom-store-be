@@ -1,6 +1,8 @@
 const express = require("express");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
+const authMiddleware = require("../middlewares/auth");
 const authController = require("../controllers/authController");
 
 const router = express.Router();
@@ -11,48 +13,57 @@ router.post("/register", authController.register);
 // Đăng nhập local
 router.post(
   "/login",
-  passport.authenticate("local"),
+  passport.authenticate("local", { session: false }),
   authController.loginSuccess
 );
 
 // Đăng nhập Facebook
 router.get(
   "/auth/facebook",
-  passport.authenticate("facebook", { scope: ["email"] })
+  passport.authenticate("facebook", { session: false, scope: ["email"] })
 );
 router.get(
   "/auth/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/login" }),
-  (req, res) => {
-    res.redirect("/api/v1/login");
-  }
+  passport.authenticate("facebook", {
+    session: false,
+    failureRedirect: "/login",
+  }),
+  authController.loginSuccess
 );
 
 // Đăng nhập Google
 router.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    session: false,
+    scope: ["profile", "email"],
+  })
 );
 router.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    res.redirect("/api/v1/login");
-  }
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "/login",
+  }),
+  authController.loginSuccess
 );
 
-// Đăng xuất
-router.get("/logout", authController.logout);
-
 //Test
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ message: "Unauthorized" });
-}
-router.get("/login", isAuthenticated, authController.loginSuccess);
-// End test
+router.get(
+  "/login/customer",
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  authController.loginSuccess
+);
+router.get(
+  "/login/admin",
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  authController.loginSuccess
+);
+router.get(
+  "/login/owner",
+  [authMiddleware.verifyToken, authMiddleware.isOwner],
+  authController.loginSuccess
+);
 
 module.exports = router;
 
@@ -165,29 +176,6 @@ module.exports = router;
  * /api/v1/auth/google:
  *   get:
  *     summary: Đăng nhập google (test trên trình duyệt, test trên đây không được đâu)
- *     tags:
- *       - Auth
- *     responses:
- *       'XXX':
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
-/**
- * @swagger
- * /api/v1/logout:
- *   get:
- *     summary: Đăng xuất
  *     tags:
  *       - Auth
  *     responses:
