@@ -26,7 +26,9 @@ const authController = {
       });
       await user.save();
       const token = generateToken(user);
-      sendResponse(res, 201, "Đăng kí người dùng thành công", { user, token });
+      
+      const redirectUrl = `/auth-redirect?token=${token}`;
+      res.redirect(redirectUrl);
     } catch (error) {
       sendResponse(res, 500, `Lỗi đăng kí người dùng mới`, {
         error: error.toString(),
