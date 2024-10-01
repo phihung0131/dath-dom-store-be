@@ -18,12 +18,10 @@
 
       if (token) {
         // Construct the domain and redirect URL
-        const domain = env.HOSTNAME !== "localhost"
-          ? `${env.HOSTNAME}`
-          : `${env.HOSTNAME}:${env.PORT_FE}`;
+        const domain = env.HOSTNAME_FE
 
         // Redirect to the main page of the application with the token
-        window.location.href = `http://${domain}/test/index.html?token=${token}`;
+        window.location.href = `${domain}?token=${token}`;
       } else {
         // Display an error message if no token is found
         document.body.innerHTML += "<p>Error: No token found</p>";

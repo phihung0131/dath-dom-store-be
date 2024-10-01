@@ -42,8 +42,7 @@ app.use("/api/v1", routes);
 // Route for the auth-redirect page
 app.get('/auth-redirect', (req, res) => {
   const env = {
-    HOSTNAME: process.env.HOSTNAME || 'localhost',
-    PORT_FE: process.env.PORT_FE || '5500'
+    HOSTNAME_FE: process.env.HOSTNAME_FE || 'localhost',
   };
   res.render('auth-redirect', { env });
 });
