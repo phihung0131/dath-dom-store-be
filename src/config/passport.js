@@ -6,7 +6,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
-let domain = `http://${process.env.HOSTNAME}`;
+let domain = `https://${process.env.HOSTNAME}`;
 if (process.env.HOSTNAME == "localhost") {
   domain = domain + `:${process.env.PORT}`;
 }
