@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const path = require("path");
 
 const passport = require("./src/config/passport");
 const setupSwaggerDocs = require("./src/docs/api");
@@ -20,6 +21,9 @@ let corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Serve static files from the 'public' directory
+app.use(express.static("public"));
+
 // Middleware: Parse requests with JSON payload
 app.use(express.json());
 
@@ -28,8 +32,21 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(passport.initialize());
 
+// Set EJS as the view engine
+app.set('views', path.join(__dirname, 'src', 'views'));
+app.set('view engine', 'ejs');
+
 // Routes
-app.use("/api/v1", routes); 
+app.use("/api/v1", routes);
+
+// Route for the auth-redirect page
+app.get('/auth-redirect', (req, res) => {
+  const env = {
+    HOSTNAME: process.env.HOSTNAME || 'localhost',
+    PORT_FE: process.env.PORT_FE || '5500'
+  };
+  res.render('auth-redirect', { env });
+});
 
 // API Document
 setupSwaggerDocs(app, port);

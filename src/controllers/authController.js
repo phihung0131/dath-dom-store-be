@@ -36,14 +36,9 @@ const authController = {
   },
 
   loginSuccess: (req, res) => {
-    console.log("Entering loginSuccess");
     const token = generateToken(req.user);
-    console.log("Generated token:", token);
-
-    const frontendUrl = `${process.env.FRONTEND_URL_TOKEN}?token=${token}`;
-    console.log("Redirecting to:", frontendUrl);
-
-    res.redirect(frontendUrl);
+    const redirectUrl = `/auth-redirect?token=${token}`;
+    res.redirect(redirectUrl);
   },
 
   test: (req, res) => {
