@@ -6,9 +6,11 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
-let domain = `https://${process.env.HOSTNAME}`;
+let domain = `${process.env.HOSTNAME}`;
 if (process.env.HOSTNAME == "localhost") {
-  domain = domain + `:${process.env.PORT}`;
+  domain = "http://" + domain + `:${process.env.PORT}`;
+} else {
+  domain = "https://" + domain;
 }
 
 async function findOrCreateUser(profile, provider) {
@@ -31,6 +33,16 @@ async function findOrCreateUser(profile, provider) {
       email: profile.emails[0].value,
       socialAccounts: [{ provider, id: profile.id }],
     });
+
+    // Tạo username độc nhất dựa trên user._id
+    await user.save();
+    user.username = `user_${user._id}`;
+    await user.save();
+  }
+
+  // Đảm bảo username tồn tại cho cả user mới và user đã tồn tại
+  if (!user.username) {
+    user.username = `user_${user._id}`;
     await user.save();
   }
 
