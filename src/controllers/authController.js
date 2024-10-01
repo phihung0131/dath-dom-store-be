@@ -26,7 +26,7 @@ const authController = {
       });
       await user.save();
       const token = generateToken(user);
-      
+
       const redirectUrl = `/auth-redirect?token=${token}`;
       res.redirect(redirectUrl);
     } catch (error) {
@@ -43,9 +43,10 @@ const authController = {
     res.redirect(redirectUrl);
   },
 
-  test: (req, res) => {
-    const token = generateToken(req.user);
-    sendResponse(res, 200, "Đăng nhập thành công", { user: req.user, token });
+  getUserInfos: (req, res) => {
+    sendResponse(res, 200, "Đăng nhập lấy thông tin User thành công", {
+      user: req.user,
+    });
   },
 };
 

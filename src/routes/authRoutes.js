@@ -64,19 +64,9 @@ router.get("/auth/google/callback", (req, res, next) => {
 
 //Test
 router.get(
-  "/login/customer",
-  [authMiddleware.verifyToken, authMiddleware.isCustomer],
-  authController.test
-);
-router.get(
-  "/login/admin",
-  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
-  authController.test
-);
-router.get(
-  "/login/owner",
-  [authMiddleware.verifyToken, authMiddleware.isOwner],
-  authController.test
+  "/user-infos",
+  [authMiddleware.verifyToken],
+  authController.getUserInfos
 );
 
 module.exports = router;
@@ -210,9 +200,9 @@ module.exports = router;
  */
 /**
  * @swagger
- * /api/v1/login/customer:
+ * /api/v1/user-infos:
  *   get:
- *     summary: Test xem đăng nhập đã thành công hay chưa
+ *     summary: Test xem đăng nhập đã thành công hay chưa, lấy thông tin người dùng qua token để phân quyền
  *     tags:
  *       - Auth
  *     security:
@@ -233,53 +223,5 @@ module.exports = router;
  *                   items:
  *                     type: object
  */
-/**
- * @swagger
- * /api/v1/login/admin:
- *   get:
- *     summary: Test xem đăng nhập đã thành công hay chưa
- *     tags:
- *       - Auth
- *     security:
- *       - bearerAuth: [] # Kết nối security scheme với API
- *     responses:
- *       'XXX':
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
-/**
- * @swagger
- * /api/v1/login/owner:
- *   get:
- *     summary: Test xem đăng nhập đã thành công hay chưa
- *     tags:
- *       - Auth
- *     security:
- *       - bearerAuth: [] # Kết nối security scheme với API
- *     responses:
- *       'XXX':
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
+
+
