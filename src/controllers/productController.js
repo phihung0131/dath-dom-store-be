@@ -1,6 +1,7 @@
 const sendResponse = require("../helper/sendResponse");
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const Review = require("../models/Review");
 require("dotenv").config();
 
 const productsController = {
@@ -79,7 +80,7 @@ const productsController = {
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalItems: total,
-        products,     
+        products,
       });
     } catch (error) {
       sendResponse(
@@ -118,6 +119,14 @@ const productsController = {
         }
       );
     }
+  },
+
+  updateProductTotalRate: async (productId) => {
+    const reviews = await Review.find({ product: productId });
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+
+    await Product.findByIdAndUpdate(productId, { totalRate: averageRating });
   },
 
   // Tạo sản phẩm mới
