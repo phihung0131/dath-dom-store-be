@@ -19,6 +19,10 @@ const ProductSchema = new mongoose.Schema(
       required: [true, "Giá sản phẩm là bắt buộc"],
       min: [0, "Giá phải là số dương"],
     },
+    promotionalPrice: {
+      type: Number,
+      default: null,
+    },
     imageUrl: {
       type: [String],
       validate: {

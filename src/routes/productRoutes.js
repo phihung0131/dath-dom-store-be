@@ -26,7 +26,7 @@ module.exports = router;
  * @swagger
  * /api/v1/products:
  *   get:
- *     summary: Lấy tất cả sản phẩm với phân trang
+ *     summary: "ALL - Lấy tất cả sản phẩm với phân trang (Note: Product nào có khuyễn mãi sẽ có thêm thuộc tính promotionalPrice)"
  *     tags:
  *       - Products
  *     parameters:
@@ -34,12 +34,12 @@ module.exports = router;
  *         name: page
  *         schema:
  *           type: integer
- *         description: Vị trí trang
+ *         description: Vị trí trang (không có thì mặc định 1)
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Số sản phẩm trong 1 trang
+ *         description: Số sản phẩm trong 1 trang (không có thì mặc định 10)
  *     responses:
  *       'XXX':
  *         content:
@@ -60,7 +60,7 @@ module.exports = router;
  * @swagger
  * /api/v1/products/search:
  *   get:
- *     summary: Tìm kiếm và lọc sản phẩm với phân trang
+ *     summary: ALL - Tìm kiếm và lọc sản phẩm với phân trang
  *     tags:
  *       - Products
  *     parameters:
@@ -68,12 +68,12 @@ module.exports = router;
  *         name: page
  *         schema:
  *           type: integer
- *         description: Vị trí trang
+ *         description: Vị trí trang (không có thì mặc định 1)
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Số sản phẩm trong 1 trang
+ *         description: Số sản phẩm trong 1 trang (không có thì mặc định 10)
  *       - in: query
  *         name: search
  *         schema:
@@ -112,7 +112,7 @@ module.exports = router;
  * @swagger
  * /api/v1/products/{id}:
  *   get:
- *     summary: Lấy chi tiết sản phẩm theo ID (chưa dùng được)
+ *     summary: "ALL - Lấy chi tiết sản phẩm theo ID (Note Product nào có khuyễn mãi sẽ có thêm thuộc tính promotionalPrice)"
  *     tags:
  *       - Products
  *     parameters:

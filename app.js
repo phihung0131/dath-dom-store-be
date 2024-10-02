@@ -7,6 +7,7 @@ const passport = require("./src/config/passport");
 const setupSwaggerDocs = require("./src/docs/api");
 const routes = require("./src/routes");
 const { connectionDatabase } = require("./src/config/database");
+const { startCronJob } = require("./src/helper/cronJob");
 
 const app = express();
 
@@ -33,18 +34,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
 // Set EJS as the view engine
-app.set('views', path.join(__dirname, 'src', 'views'));
-app.set('view engine', 'ejs');
+app.set("views", path.join(__dirname, "src", "views"));
+app.set("view engine", "ejs");
 
 // Routes
 app.use("/api/v1", routes);
 
 // Route for the auth-redirect page
-app.get('/auth-redirect', (req, res) => {
+app.get("/auth-redirect", (req, res) => {
   const env = {
-    HOSTNAME_FE: process.env.HOSTNAME_FE || 'localhost',
+    HOSTNAME_FE: process.env.HOSTNAME_FE || "localhost",
   };
-  res.render('auth-redirect', { env });
+  res.render("auth-redirect", { env });
 });
 
 // API Document
@@ -52,6 +53,9 @@ setupSwaggerDocs(app, port);
 
 // Connect to the database
 connectionDatabase();
+
+// Bắt đầu cron job
+startCronJob();
 
 // Start the server
 app.listen(port, hostname, () => {

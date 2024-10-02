@@ -20,6 +20,7 @@ const ReviewSchema = new mongoose.Schema(
       type: Number,
       min: [0, "Rating ít nhất là 0"],
       max: [5, "Rating không được vượt quá 5"],
+      default: 5,
     },
   },
   { timestamps: true }

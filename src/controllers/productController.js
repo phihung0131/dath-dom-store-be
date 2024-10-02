@@ -2,7 +2,7 @@ const sendResponse = require("../helper/sendResponse");
 const Product = require("../models/Product");
 const Category = require("../models/Category");
 const Review = require("../models/Review");
-require("dotenv").config();
+const Promotion = require("../models/Promotion");
 
 const productsController = {
   // Lấy danh sách tất cả sản phẩm
@@ -101,12 +101,43 @@ const productsController = {
       const product = await Product.findById(req.params.id)
         .select("-deleted -createdAt -updatedAt -__v")
         .populate({ path: "category", select: "name -_id" });
-      if (!product) sendResponse(res, 404, "Sản phẩm không tồn tại");
+  
+      if (!product) {
+        return sendResponse(res, 404, "Sản phẩm không tồn tại");
+      }
+  
+      // Lấy tất cả review của sản phẩm
+      const reviews = await Review.find({ product: req.params.id })
+        .select("-deleted -__v")
+        .populate({ path: "customer", select: "name -_id" });
+  
+      // Lấy tất cả promotion đang có hiệu lực của sản phẩm
+      const currentDate = new Date();
+      const activePromotions = await Promotion.find({
+        product: req.params.id,
+        startDate: { $lte: currentDate },
+        endDate: { $gte: currentDate }
+      }).select("-deleted -__v");
+  
+      // Tính giá khuyến mãi nếu có
+      let promotionalPrice = product.price;
+      if (activePromotions.length > 0) {
+        const highestDiscount = Math.max(...activePromotions.map(p => p.discountPercent));
+        promotionalPrice = product.price * (1 - highestDiscount / 100);
+      }
+  
+      const productDetails = {
+        ...product.toObject(),
+        reviews,
+        activePromotions,
+        currentPrice: promotionalPrice
+      };
+  
       sendResponse(
         res,
         200,
         "Lấy dữ liệu chi tiết Product thành công",
-        product
+        productDetails
       );
     } catch (error) {
       sendResponse(
@@ -119,14 +150,6 @@ const productsController = {
         }
       );
     }
-  },
-
-  updateProductTotalRate: async (productId) => {
-    const reviews = await Review.find({ product: productId });
-    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-    const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
-
-    await Product.findByIdAndUpdate(productId, { totalRate: averageRating });
   },
 
   // Tạo sản phẩm mới
@@ -142,6 +165,44 @@ const productsController = {
   // Xóa sản phẩm
   deleteProduct: async (req, res) => {
     // logic xóa sản phẩm
+  },
+
+  updateProductTotalRate: async (productId) => {
+    const reviews = await Review.find({ product: productId });
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+
+    await Product.findByIdAndUpdate(productId, { totalRate: averageRating });
+  },
+
+  updatePromotionalPrices: async () => {
+    const currentDate = new Date();
+
+    // Find all active promotions
+    const activePromotions = await Promotion.find({
+      startDate: { $lte: currentDate },
+      endDate: { $gte: currentDate },
+    });
+
+    for (const promotion of activePromotions) {
+      const product = await Product.findById(promotion.product);
+      if (product) {
+        const discountedPrice =
+          product.price * (1 - promotion.discountPercent / 100);
+        await Product.findByIdAndUpdate(product._id, {
+          promotionalPrice: discountedPrice,
+        });
+      }
+    }
+
+    // Reset promotional prices for products without active promotions
+    await Product.updateMany(
+      {
+        _id: { $nin: activePromotions.map((p) => p.product) },
+        promotionalPrice: { $ne: null },
+      },
+      { promotionalPrice: null }
+    );
   },
 };
 
