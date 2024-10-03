@@ -52,6 +52,9 @@ const productsController = {
       const searchQuery = req.query.search || "";
       const category = req.query.category || null;
       const priceRange = req.query.priceRange || null;
+      const sortBy = req.query.sortBy || "createdAt";
+      const sortOrder = req.query.sortOrder === "desc" ? -1 : 1;
+      const minRating = parseFloat(req.query.minRating) || 0;
 
       let query = { name: { $regex: searchQuery, $options: "i" } };
 
@@ -69,7 +72,25 @@ const productsController = {
         query.price = { $gte: minPrice, $lte: maxPrice };
       }
 
+      // Lọc theo đánh giá tối thiểu
+      if (minRating > 0) {
+        query.totalRate = { $gte: minRating };
+      }
+
+      // Xác định trường sắp xếp
+      let sort = {};
+      if (sortBy === "price") {
+        sort.price = sortOrder;
+      } else if (sortBy === "rating") {
+        sort.totalRate = sortOrder;
+      } else if (sortBy === "name") {
+        sort.name = sortOrder;
+      } else {
+        sort.createdAt = sortOrder;
+      }
+
       const products = await Product.find(query)
+        .sort(sort)
         .skip(skip)
         .limit(limit)
         .select("-infos -deleted -createdAt -updatedAt -__v")
@@ -101,38 +122,40 @@ const productsController = {
       const product = await Product.findById(req.params.id)
         .select("-deleted -createdAt -updatedAt -__v")
         .populate({ path: "category", select: "name -_id" });
-  
+
       if (!product) {
         return sendResponse(res, 404, "Sản phẩm không tồn tại");
       }
-  
+
       // Lấy tất cả review của sản phẩm
       const reviews = await Review.find({ product: req.params.id })
         .select("-deleted -__v")
         .populate({ path: "customer", select: "name -_id" });
-  
+
       // Lấy tất cả promotion đang có hiệu lực của sản phẩm
       const currentDate = new Date();
       const activePromotions = await Promotion.find({
         product: req.params.id,
         startDate: { $lte: currentDate },
-        endDate: { $gte: currentDate }
+        endDate: { $gte: currentDate },
       }).select("-deleted -__v");
-  
+
       // Tính giá khuyến mãi nếu có
       let promotionalPrice = product.price;
       if (activePromotions.length > 0) {
-        const highestDiscount = Math.max(...activePromotions.map(p => p.discountPercent));
+        const highestDiscount = Math.max(
+          ...activePromotions.map((p) => p.discountPercent)
+        );
         promotionalPrice = product.price * (1 - highestDiscount / 100);
       }
-  
+
       const productDetails = {
         ...product.toObject(),
         reviews,
         activePromotions,
-        currentPrice: promotionalPrice
+        currentPrice: promotionalPrice,
       };
-  
+
       sendResponse(
         res,
         200,

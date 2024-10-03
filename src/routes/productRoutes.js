@@ -85,13 +85,31 @@ module.exports = router;
  *         schema:
  *           type: string
  *         description: Danh mục sản phẩm cần tìm
- *         example: Giày Thời Trang Nữ
+ *         example: Giày chạy bộ nam
  *       - in: query
  *         name: priceRange
  *         schema:
  *           type: string
  *         description: Khoảng giá sản phẩm cần tìm
  *         example: 1000-200000
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *         description: Sắp xếp theo gì (name/prire/rating) => không điền thì xếp theo sản phẩm mới nhất
+ *         example: name
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *         description: Giảm dần hay tăng dần (mặc định là tăng)
+ *         example: desc
+ *       - in: query
+ *         name: minRating
+ *         schema:
+ *           type: string
+ *         description: Lọc theo rating 
+ *         example: 3
  *     responses:
  *       'XXX':
  *         content:
