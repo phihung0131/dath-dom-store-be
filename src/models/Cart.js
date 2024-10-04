@@ -10,8 +10,7 @@ const CartSchema = new mongoose.Schema(
     },
     total: {
       type: Number,
-      required: [true, "Tổng giá là bắt buộc"],
-      min: [0, "Tổng giá phải là số dương"],
+      default: 0,
     },
   },
   { timestamps: true }
@@ -25,4 +24,4 @@ CartSchema.plugin(mongooseDelete, {
 });
 
 const Cart = mongoose.model("Cart", CartSchema);
-module.exports = Cart;  
+module.exports = Cart;

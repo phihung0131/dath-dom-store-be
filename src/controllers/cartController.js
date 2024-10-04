@@ -1,4 +1,3 @@
-const { get } = require("mongoose");
 const sendResponse = require("../helper/sendResponse");
 const Cart = require("../models/Cart");
 const CartProduct = require("../models/CartProduct");
@@ -6,48 +5,67 @@ const Product = require("../models/Product");
 require("dotenv").config();
 
 const cartsController = {
-  // Lấy danh sách tất cả sản phẩm trong cart cua nguoi dung co ID
   getCarts: async (req, res) => {
     try {
-      // const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định 1)
-      // const skip = (page - 1) * 10; // Bỏ qua các sản phẩm trước trang hiện tại
-      const customerID = req.user._id
+      const customerID = req.user._id;
 
       // Tìm cart có customer_id là customerID
-      const cart = await Cart.findOne({ customer_id: customerID })
-        .select("-infos -deleted -createdAt -updatedAt -__v");
+      let cart = await Cart.findOne({ customer_id: customerID }).select(
+        "customer_id _id total"
+      );
 
       if (!cart) {
-        return res.status(404).json({ message: "Cart not found" });
+        newCart = new Cart({
+          customer_id: customerID,
+        });
+        // Tạo giỏ hàng mới
+        await newCart.save();
+        cart = newCart;
       }
 
       // Tìm các sản phẩm trong cart
-      const cartProducts = await CartProduct.find({ cart_id: cart._id }).select("product_id quantity -_id");
+      const cartProducts = await CartProduct.find({ cart_id: cart._id }).select(
+        "product_id quantity color size -_id"
+      );
 
-      // Populate product details
-      const productIds = cartProducts.map(cp => cp.product_id);
-      const products = await Product.find({ _id: { $in: productIds } }).select("name description price imageUrl category _id");
-      // const productInfor = cartProducts.map(cp => ({
-      //   product_id: cp.product_id,
-      //   quantity: cp.quantity
-      // }));
-      const ProductInfo = cartProducts.map(cp => {
-        const product = products.find(p => p._id.toString() === cp.product_id.toString());
-          return {
-            ...product._doc, // Spread the product details
-            quantity: cp.quantity
-          };
+      // Get product details
+      const productIds = cartProducts.map((cp) => cp.product_id);
+      const products = await Product.find({ _id: { $in: productIds } }).select(
+        "name price imageUrl _id promotionalPrice"
+      );
+
+      const productInfo = cartProducts.map((cp) => {
+        const product = products.find(
+          (p) => p._id.toString() === cp.product_id.toString()
+        );
+        return {
+          ...product._doc,
+          quantity: cp.quantity,
+          color: cp.color,
+          size: cp.size,
+        };
       });
-      // tinh tong tien = quantity_product1 * price_price1 + quantity_product2 * price_product2 + ...
-      const totalPrice = ProductInfo.reduce((acc, cur) => acc + cur.price * cur.quantity, 0); 
+
+      // // Calculate total price, using promotionalPrice if available
+      // const totalPrice = productInfo.reduce((acc, cur) => {
+      //   const priceToUse =
+      //     cur.promotionalPrice !== null ? cur.promotionalPrice : cur.price;
+      //   return acc + priceToUse * cur.quantity;
+      // }, 0);
+
+      // Calculate total product
+      const total = productInfo.reduce((acc, cur) => {
+        return acc + cur.quantity;
+      }, 0);
+
+      await Cart.findByIdAndUpdate(cart._id, { total });
+
       // Trả về kết quả
       res.status(200).json({
         message: "Lấy dữ liệu Cart thành công",
         data: {
-          cart,
-          ProductInfo
+          cart: { ...cart._doc, productInfo, total },
         },
-        totalPrice
       });
     } catch (error) {
       console.error(error);
@@ -55,8 +73,6 @@ const cartsController = {
     }
   },
   // thay doi so luong san pham trong cart
-  
-
 };
 
 module.exports = cartsController;

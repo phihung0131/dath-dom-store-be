@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const mongooseDelete = require('mongoose-delete');
+const mongoose = require("mongoose");
+const mongooseDelete = require("mongoose-delete");
 
 const CartProductSchema = new mongoose.Schema(
   {
@@ -18,14 +18,24 @@ const CartProductSchema = new mongoose.Schema(
       required: [true, "Số lượng là bắt buộc"],
       min: [1, "Số lượng phải ít nhất là 1"],
     },
+    color: {
+      type: String,
+      required: [true, "Màu sắc là bắt buộc"],
+    },
+    size: {
+      type: Number,
+      required: [true, "Kích thước là bắt buộc"],
+    },
   },
   { timestamps: true }
 );
+
 CartProductSchema.plugin(mongooseDelete, {
   deletedAt: true,
-  overrideMethods: 'all',
-  indexFields: ['deletedAt'],
+  overrideMethods: "all",
+  indexFields: ["deletedAt"],
 });
-const CartProduct = mongoose.model('CartProduct', CartProductSchema);
+
+const CartProduct = mongoose.model("CartProduct", CartProductSchema);
 
 module.exports = CartProduct;
