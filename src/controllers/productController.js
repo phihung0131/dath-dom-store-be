@@ -4,31 +4,72 @@ const Category = require("../models/Category");
 const Review = require("../models/Review");
 const Promotion = require("../models/Promotion");
 
+const transformProductData = (product) => {
+  const colorSummary = {};
+  let totalQuantity = 0;
+
+  product.infos.forEach((info) => {
+    if (!colorSummary[info.color]) {
+      colorSummary[info.color] = {
+        sizes: {},
+        totalQuantity: 0,
+      };
+    }
+
+    colorSummary[info.color].sizes[info.size] = info.quantity;
+    colorSummary[info.color].totalQuantity += info.quantity;
+    totalQuantity += info.quantity;
+  });
+
+  return {
+    _id: product._id,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    promotionalPrice: product.promotionalPrice,
+    imageUrl: product.imageUrl,
+    category: product.category,
+    totalRate: product.totalRate,
+    colorSummary: Object.entries(colorSummary).map(([color, data]) => ({
+      color,
+      sizes: Object.entries(data.sizes).map(([size, quantity]) => ({
+        size: Number(size),
+        quantity,
+      })),
+      totalQuantity: data.totalQuantity,
+    })),
+    totalQuantity,
+    totalColors: Object.keys(colorSummary).length,
+    totalSizes: [...new Set(product.infos.map((info) => info.size))].length,
+  };
+};
+
 const productsController = {
   // Lấy danh sách tất cả sản phẩm
   getAllProducts: async (req, res) => {
     try {
-      const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định 1)
-      const limit = parseInt(req.query.limit) || 10; // Số lượng sản phẩm trên mỗi trang (mặc định 10)
-      const skip = (page - 1) * limit; // Bỏ qua các sản phẩm trước trang hiện tại
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
 
-      // Lấy tất cả sản phẩm theo phân trang
+      // Get products with all fields
       const products = await Product.find()
-        .sort({ createdAt: -1 }) // Sắp xếp theo ngày tạo từ mới nhất đến cũ nhất
+        .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .select("-infos -deleted -createdAt -updatedAt -__v")
         .populate({ path: "category", select: "name -_id" });
 
-      // Tổng số lượng sản phẩm
+      // Transform product data using the shared function
+      const transformedProducts = products.map(transformProductData);
+
       const total = await Product.countDocuments();
+
       sendResponse(res, 200, "Lấy dữ liệu Product thành công", {
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalItems: total,
-        products,
+        products: transformedProducts,
       });
-      // Trả về kết quả
     } catch (error) {
       sendResponse(
         res,
@@ -59,7 +100,7 @@ const productsController = {
       let query = { name: { $regex: searchQuery, $options: "i" } };
 
       if (category) {
-        categoryTemp = await Category.findOne({
+        const categoryTemp = await Category.findOne({
           name: { $regex: category, $options: "i" },
         });
         if (categoryTemp) {
@@ -72,12 +113,10 @@ const productsController = {
         query.price = { $gte: minPrice, $lte: maxPrice };
       }
 
-      // Lọc theo đánh giá tối thiểu
       if (minRating > 0) {
         query.totalRate = { $gte: minRating };
       }
 
-      // Xác định trường sắp xếp
       let sort = {};
       if (sortBy === "price") {
         sort.price = sortOrder;
@@ -93,15 +132,17 @@ const productsController = {
         .sort(sort)
         .skip(skip)
         .limit(limit)
-        .select("-infos -deleted -createdAt -updatedAt -__v")
         .populate({ path: "category", select: "name -_id" });
+
+      const transformedProducts = products.map(transformProductData);
+
       const total = await Product.countDocuments(query);
 
       sendResponse(res, 200, "Tìm kiếm dữ liệu Product thành công", {
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalItems: total,
-        products,
+        products: transformedProducts,
       });
     } catch (error) {
       sendResponse(
@@ -119,20 +160,19 @@ const productsController = {
   // Lấy thông tin chi tiết của một sản phẩm
   getProduct: async (req, res) => {
     try {
-      const product = await Product.findById(req.params.id)
-        .select("-deleted -createdAt -updatedAt -__v")
-        .populate({ path: "category", select: "name -_id" });
+      const product = await Product.findById(req.params.id).populate({
+        path: "category",
+        select: "name -_id",
+      });
 
       if (!product) {
         return sendResponse(res, 404, "Sản phẩm không tồn tại");
       }
 
-      // Lấy tất cả review của sản phẩm
       const reviews = await Review.find({ product: req.params.id })
         .select("-deleted -__v")
-        .populate({ path: "customer", select: "name -_id" });
+        .populate({ path: "customer", select: "name _id" });
 
-      // Lấy tất cả promotion đang có hiệu lực của sản phẩm
       const currentDate = new Date();
       const activePromotions = await Promotion.find({
         product: req.params.id,
@@ -140,20 +180,12 @@ const productsController = {
         endDate: { $gte: currentDate },
       }).select("-deleted -__v");
 
-      // Tính giá khuyến mãi nếu có
-      let promotionalPrice = product.price;
-      if (activePromotions.length > 0) {
-        const highestDiscount = Math.max(
-          ...activePromotions.map((p) => p.discountPercent)
-        );
-        promotionalPrice = product.price * (1 - highestDiscount / 100);
-      }
+      const transformedProduct = transformProductData(product);
 
       const productDetails = {
-        ...product.toObject(),
+        ...transformedProduct,
         reviews,
         activePromotions,
-        currentPrice: promotionalPrice,
       };
 
       sendResponse(
