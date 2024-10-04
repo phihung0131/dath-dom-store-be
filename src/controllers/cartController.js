@@ -61,15 +61,12 @@ const cartsController = {
       await Cart.findByIdAndUpdate(cart._id, { total });
 
       // Trả về kết quả
-      res.status(200).json({
-        message: "Lấy dữ liệu Cart thành công",
-        data: {
-          cart: { ...cart._doc, productInfo, total },
-        },
+      sendResponse(res, 200, "Lấy dữ liệu Cart thành công", {
+        cart: { ...cart._doc, productInfo, total },
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+      // console.error(error);
+      sendResponse(res, 500, "Lỗi lấy dữ liệu Cart", error.toString());
     }
   },
   // thay doi so luong san pham trong cart
