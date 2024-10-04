@@ -8,4 +8,4 @@ const {seedCarts} = require ("./cartSeeder")
 connectionDatabase();
 
 seedProducts(mongoose)
-seedCarts(mongoose)
+seedCarts()
