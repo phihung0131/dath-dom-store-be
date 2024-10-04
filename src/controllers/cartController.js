@@ -9,13 +9,9 @@ const cartsController = {
   // Lấy danh sách tất cả sản phẩm trong cart cua nguoi dung co ID
   getCarts: async (req, res) => {
     try {
-      const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định 1)
-      const skip = (page - 1) * 10; // Bỏ qua các sản phẩm trước trang hiện tại
-      const customerID = req.query.customerID || null;
-
-      if (!customerID) {
-        return res.status(400).json({ message: "customerID is required" });
-      }
+      // const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định 1)
+      // const skip = (page - 1) * 10; // Bỏ qua các sản phẩm trước trang hiện tại
+      const customerID = req.user._id
 
       // Tìm cart có customer_id là customerID
       const cart = await Cart.findOne({ customer_id: customerID })
