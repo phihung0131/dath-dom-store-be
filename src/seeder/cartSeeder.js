@@ -35,11 +35,15 @@ const seedCarts = async () => {
           cart_id: insertedCart._id,
           product_id: new mongoose.Types.ObjectId('66f6405f15cc467edadcd4a2'),
           quantity: 2,
+          color: "Red",
+          size: 10,
         },
         {
           cart_id: insertedCart._id,
           product_id: new  mongoose.Types.ObjectId('66f6405f15cc467edadcd4c0'),
           quantity: 2,
+          color: "Blue",
+          size: 12,
         },
       ];
 

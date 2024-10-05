@@ -10,21 +10,12 @@ router.get(
   [authMiddleware.verifyToken, authMiddleware.isCustomer],
   cartsController.getCarts
 );
-
-// // Tìm kiếm và lọc sản phẩm với phân trang
-// router.get("/carts/search", cartsController.searchAndFilterCarts);
-
-// // Lấy chi tiết sản phẩm theo ID
-// router.get("/carts/:id", cartsController.getCart);
-
-// // Tạo sản phẩm mới
-// router.post("/carts", (req, res) => res.send("Chưa làm"));
-
-// // Cập nhật sản phẩm
-// router.put("/carts/:id", (req, res) => res.send("Chưa làm"));
-
-// // Xóa sản phẩm
-// router.delete("/carts/:id", (req, res) => res.send("Chưa làm"));
-
+router.put('/carts', 
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  cartsController.updateCart
+);
+router.delete('/carts',
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  cartsController.deleteCart
+);
 module.exports = router;
-
