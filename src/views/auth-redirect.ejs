@@ -11,14 +11,14 @@
 
     <script>
       // The `env` object is dynamically rendered into the page using EJS syntax
-      const env = <%- JSON.stringify(env) %>; 
-      
+      const env = <%- JSON.stringify(env) %>;
+
       // Get the token from the URL's query parameters
       const token = new URLSearchParams(window.location.search).get("token");
 
       if (token) {
         // Construct the domain and redirect URL
-        const domain = env.HOSTNAME_FE
+        const domain = env.HOSTNAME_FE + "/auth";
 
         // Redirect to the main page of the application with the token
         window.location.href = `${domain}?token=${token}`;
