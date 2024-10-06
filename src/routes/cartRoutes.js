@@ -18,4 +18,9 @@ router.delete('/carts',
   [authMiddleware.verifyToken, authMiddleware.isCustomer],
   cartsController.deleteCart
 );
+// thêm sản phẩm vào giỏ hàng
+router.post('/carts',
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  cartsController.addProductToCart
+);
 module.exports = router;

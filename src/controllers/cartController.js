@@ -1,3 +1,4 @@
+const { get } = require("mongoose");
 const sendResponse = require("../helper/sendResponse");
 const Cart = require("../models/Cart");
 const CartProduct = require("../models/CartProduct");
@@ -14,9 +15,9 @@ const getCartInfo = async (customerID) => {
     cart = newCart;
   }
 
-  const cartProducts = await CartProduct.find({ cart_id: cart._id }).select(
-    "product_id quantity color size -_id"
-  );
+  let cartProducts = await CartProduct.find({ cart_id: cart._id }).select(
+    "product_id quantity color size _id"
+  ).sort({ createdAt: -1 });
 
   // Get product details
   const productIds = cartProducts.map((cp) => cp.product_id);
@@ -29,7 +30,12 @@ const getCartInfo = async (customerID) => {
       (p) => p._id.toString() === cp.product_id.toString()
     );
     return {
-      ...product._doc,
+      cartProductId: cp._id,
+      product_id: product._id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      promotionalPrice: product.promotionalPrice,
       quantity: cp.quantity,
       color: cp.color,
       size: cp.size,
@@ -60,7 +66,7 @@ const cartsController = {
   },
   // thay doi so luong san pham trong cart
   updateCart: async (req, res) => {
-    const { productId, quantity , color , size } = req.body;
+    const { cartProductId, quantity , color , size } = req.body;
     try {
       const customerID = req.user._id;
 
@@ -75,7 +81,7 @@ const cartsController = {
         cart = newCart;
       }
 
-      const cartProduct = await CartProduct.findOne({ cart_id: cart._id, product_id: productId });
+      const cartProduct = await CartProduct.findOne({_id: cartProductId });
       if (!cartProduct) {
         return sendResponse(res, 404, 'Product not found in cart');
       }
@@ -99,7 +105,7 @@ const cartsController = {
   },
   //xoa san pham trong cart
   deleteCart: async (req, res) => {
-    const { productId } = req.body;
+    const { cartProductId } = req.body;
     try {
       const customerID = req.user._id;
 
@@ -113,9 +119,9 @@ const cartsController = {
         await newCart.save();
         cart = newCart;
       }
-      const cartProduct = await CartProduct.findOne({ cart_id: cart._id, product_id: productId });
+      const cartProduct = await CartProduct.findOne({ _id: cartProductId });
       if (!cartProduct) {
-        return sendResponse(res, 404, 'Product not found in cart', { cart });
+        return sendResponse(res, 404, 'Product not found in cart', {cart});
       }
       await cartProduct.delete();
       
@@ -124,6 +130,82 @@ const cartsController = {
       sendResponse(res, 200, 'Product removed from cart successfully',cartInfo);
     } catch (error) {
       sendResponse(res, 500, 'Error removing product from cart', error.toString());
+    }
+  },
+  // them san pham vao cart
+  addProductToCart: async (req, res) => {
+    let { product_id, quantity, color, size } = req.body;
+    try {
+      const customerID = req.user._id;
+      let cartInfo = await getCartInfo(customerID);
+      // Tìm cart có customer_id là customerID
+      let cart = await Cart.findOne({ customer_id: customerID });
+      if (!cart) {
+        let newCart = new Cart({
+          customer_id: customerID,
+        });
+        // Tạo giỏ hàng mới
+        await newCart.save();
+        cart = newCart;
+      }
+      const product = await Product.findById(product_id);
+      if (!product) {
+        return sendResponse(res, 404, 'Product not found');
+      }
+
+      // Set default values if not provided
+      quantity = quantity || 1;
+      if (!color || !size) {
+        const defaultInfo = product.infos[0];
+        color = color || defaultInfo.color;
+        size = size || defaultInfo.size;
+      }
+      // Validate color
+      const colorExists = product.infos.some(info => info.color === color);
+      if (!colorExists) {
+        return sendResponse(res, 400, 'Not have this color',cartInfo);
+      }
+      // Validate size for the given color
+      const sizeExists = product.infos.some(info => info.color === color && info.size === size);
+      if (!sizeExists) {
+        const availableSizes = product.infos
+          .filter(info => info.color === color)
+          .map(info => info.size);
+        return sendResponse(res, 400, `Available sizes for color ${color}: ${availableSizes.join(', ')}`,cartInfo);
+      }
+      const productInfo = product.infos.find(info => info.color === color && info.size === size);
+      if (quantity > productInfo.quantity) {
+        return sendResponse(res, 400, 'Quantity exceeds available stock',cartInfo);
+      }
+      // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+      let cartProduct = await CartProduct.findOne({
+        cart_id: cart._id,
+        product_id,
+        color,
+        size,
+      });
+      if (cartProduct) {
+        // check tong quantity
+        const totalQuantity = cartProduct.quantity + quantity;
+        if (totalQuantity > productInfo.quantity) {
+          return sendResponse(res, 400, 'Quantity exceeds available stock',cartInfo);
+        }
+        cartProduct.quantity += quantity;
+      } else {
+        // Nếu chưa có thì tạo mới
+        cartProduct = new CartProduct({
+          cart_id: cart._id,
+          product_id,
+          quantity,
+          color,
+          size,
+        });
+      }
+      await cartProduct.save();
+      cartInfo = await getCartInfo(customerID);
+      sendResponse(res, 200, 'Product added to cart successfully', cartInfo);
+    } catch (error) {
+      sendResponse(res, 500, 'Error adding product to cart', error.toString());
     }
   },
 };
