@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const productsController = require("../controllers/productController");
+const upload = require("../config/multer");
 
 // Lấy tất cả sản phẩm với phân trang
 router.get("/products", productsController.getAllProducts);
@@ -12,7 +13,11 @@ router.get("/products/search", productsController.searchAndFilterProducts);
 router.get("/products/:id", productsController.getProduct);
 
 // Tạo sản phẩm mới
-router.post("/products", (req, res) => res.send("Chưa làm"));
+router.post(
+  "/products",
+  upload.array("images", 5),
+  productsController.createProduct
+);
 
 // Cập nhật sản phẩm
 router.put("/products/:id", (req, res) => res.send("Chưa làm"));
@@ -108,7 +113,7 @@ module.exports = router;
  *         name: minRating
  *         schema:
  *           type: string
- *         description: Lọc theo rating 
+ *         description: Lọc theo rating
  *         example: 3
  *     responses:
  *       'XXX':
@@ -141,6 +146,84 @@ module.exports = router;
  *         description: Id của sản phẩm cần xem
  *         require: true
  *         example: 66f6405f15cc467edadcd480
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+
+/**
+ * @swagger
+ * /api/v1/products:
+ *   post:
+ *     summary: "OWNER/ADMIN - Tạo sản phẩm mới"
+ *     tags:
+ *       - Products
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Tên của sản phẩm
+ *                 required: true
+ *                 example: "Giày Ultraboost 5"
+ *               description:
+ *                 type: string
+ *                 description: Mô tả sản phẩm
+ *                 required: true
+ *                 example: "Được cải tiến nhằm mang lại cảm giác êm ái hơn, thoải mái hơn và nhẹ nhàng hơn cho buổi chạy hoàn toàn khác biệt, giày Ultraboost 5 khai phá năng lượng chạy bộ của bạn."
+ *               price:
+ *                 type: number
+ *                 description: Giá của sản phẩm
+ *                 required: true
+ *                 example: 4000000
+ *               categoryId:
+ *                 type: string
+ *                 description: ID của danh mục sản phẩm
+ *                 required: true
+ *                 example: "66f62476c8ffe5afc825e223"
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Các file ảnh sản phẩm (tối đa 5 ảnh)
+ *               infos:
+ *                 type: array
+ *                 description: "Thông tin chi tiết"
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     color:
+ *                       type: string
+ *                       example: "Black"
+ *                     size:
+ *                       type: number
+ *                       example: 42
+ *                     quantity:
+ *                       type: number
+ *                       example: 100
+ *                 example: [
+ *                   {"color": "Black", "size": 42, "quantity": 100},
+ *                   {"color": "Pink", "size": 45, "quantity": 100}
+ *                 ]
  *     responses:
  *       'XXX':
  *         content:

@@ -209,7 +209,39 @@ const productsController = {
 
   // Tạo sản phẩm mới
   createProduct: async (req, res) => {
-    // logic thêm sản phẩm mới
+    try {
+      const productData = req.body;
+
+      // Kiểm tra xem category có tồn tại không (giả sử bạn có model Category)
+      const category = await Category.findById(productData.categoryId);
+      if (!category) {
+        return sendResponse(res, 400, "Danh mục không tồn tại");
+      }
+      productData.category = category._id;
+      // Xử lý các file đã tải lên
+      if (req.files && req.files.length > 0) {
+        productData.imageUrl = req.files.map((file) => file.path);
+      }
+      productData.infos = JSON.parse(productData.infos);
+      // Tạo sản phẩm mới
+      const newProduct = new Product(productData);
+
+      // Lưu sản phẩm vào database
+      await newProduct.save();
+
+      return sendResponse(
+        res,
+        201,
+        "Sản phẩm đã được tạo thành công",
+        newProduct
+      );
+    } catch (error) {
+      console.error(error);
+
+      return sendResponse(res, 500, "Có lỗi xảy ra khi tạo sản phẩm", {
+        error: error.toString(),
+      });
+    }
   },
 
   // Cập nhật sản phẩm

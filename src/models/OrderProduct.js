@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const mongooseDelete = require("mongoose-delete");
 
 const OrderProductSchema = new mongoose.Schema(
   {
@@ -30,12 +29,6 @@ const OrderProductSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Apply mongoose-delete plugin with options
-OrderProductSchema.plugin(mongooseDelete, {
-  deletedAt: true,
-  overrideMethods: "all",
-  indexFields: ["deletedAt"],
-});
 
 const OrderProduct = mongoose.model("OrderProduct", OrderProductSchema);
 module.exports = OrderProduct;

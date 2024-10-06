@@ -28,7 +28,7 @@ const ProductSchema = new mongoose.Schema(
       validate: {
         validator: function (value) {
           return value.every((url) =>
-            /^https?:\/\/.+\.(jpg|jpeg|png|gif)$/.test(url)
+            /^https?:\/\/.+\.(jpg|jpeg|png|gif|avif)$/.test(url)
           ); // Validates if each string is a valid image URL
         },
         message:
