@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const productsController = require("../controllers/productController");
+const authMiddleware = require("../middlewares/auth");
 const upload = require("../config/multer");
 
 // Lấy tất cả sản phẩm với phân trang
@@ -15,15 +16,27 @@ router.get("/products/:id", productsController.getProduct);
 // Tạo sản phẩm mới
 router.post(
   "/products",
-  upload.array("images", 5),
+  [
+    authMiddleware.verifyToken,
+    authMiddleware.isCustomer,
+    upload.array("images", 5),
+  ],
   productsController.createProduct
 );
 
 // Cập nhật sản phẩm
-router.put("/products/:id", (req, res) => res.send("Chưa làm"));
+router.put(
+  "/products/:id",
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  productsController.updateProduct
+);
 
 // Xóa sản phẩm
-router.delete("/products/:id", (req, res) => res.send("Chưa làm"));
+router.delete(
+  "/products/:id",
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  productsController.deleteProduct
+);
 
 module.exports = router;
 
@@ -162,7 +175,6 @@ module.exports = router;
  *                   items:
  *                     type: object
  */
-
 /**
  * @swagger
  * /api/v1/products:
@@ -207,7 +219,7 @@ module.exports = router;
  *                 description: Các file ảnh sản phẩm (tối đa 5 ảnh)
  *               infos:
  *                 type: array
- *                 description: "Thông tin chi tiết"
+ *                 description: "Thông tin chi tiết (chuỗi JSON ví dụ: [ {'color': 'Black', 'size': 42, 'quantity': 100},{'color': 'Pink', 'size': 45, 'quantity': 100}])"
  *                 items:
  *                   type: object
  *                   properties:
@@ -239,4 +251,182 @@ module.exports = router;
  *                   type: array
  *                   items:
  *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/products/{id}:
+ *   put:
+ *     summary: "OWNER/ADMIN - Cập nhật sản phẩm"
+ *     tags:
+ *       - Products
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của sản phẩm cần cập nhật
+ *         example: 66f6405f15cc467edadcd4a2
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Tên mới của sản phẩm
+ *                 example: "Giày Ultraboost 6"
+ *               description:
+ *                 type: string
+ *                 description: Mô tả mới của sản phẩm
+ *                 example: "Phiên bản cải tiến của Ultraboost 5, mang lại trải nghiệm chạy bộ tuyệt vời hơn."
+ *               price:
+ *                 type: number
+ *                 description: Giá mới của sản phẩm
+ *                 example: 4500000
+ *               categoryId:
+ *                 type: string
+ *                 description: ID mới của danh mục sản phẩm
+ *                 example: "66f62476c8ffe5afc825e224"
+ *               infos:
+ *                 type: array
+ *                 description: "Thông tin chi tiết mới (chuỗi JSON)"
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     color:
+ *                       type: string
+ *                       example: "White"
+ *                     size:
+ *                       type: number
+ *                       example: 43
+ *                     quantity:
+ *                       type: number
+ *                       example: 150
+ *                 example: [
+ *                   {"color": "White", "size": 43, "quantity": 150},
+ *                   {"color": "Blue", "size": 44, "quantity": 120}
+ *                 ]
+ *     responses:
+ *       '200':
+ *         description: Sản phẩm đã được cập nhật thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Sản phẩm đã được cập nhật thành công"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "60d5ecb74f3e6468c7187f1a"
+ *                     name:
+ *                       type: string
+ *                       example: "Giày Ultraboost 6"
+ *                     description:
+ *                       type: string
+ *                       example: "Phiên bản cải tiến của Ultraboost 5, mang lại trải nghiệm chạy bộ tuyệt vời hơn."
+ *                     price:
+ *                       type: number
+ *                       example: 4500000
+ *                     promotionalPrice:
+ *                       type: number
+ *                       example: null
+ *                     imageUrl:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
+ *                     category:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                           example: "Giày chạy bộ"
+ *                     totalRate:
+ *                       type: number
+ *                       example: 4.5
+ *                     colorSummary:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           color:
+ *                             type: string
+ *                             example: "White"
+ *                           sizes:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 size:
+ *                                   type: number
+ *                                   example: 43
+ *                                 quantity:
+ *                                   type: number
+ *                                   example: 150
+ *                           totalQuantity:
+ *                             type: number
+ *                             example: 150
+ *                     totalQuantity:
+ *                       type: number
+ *                       example: 270
+ *                     totalColors:
+ *                       type: number
+ *                       example: 2
+ *                     totalSizes:
+ *                       type: number
+ *                       example: 2
+ *       '400':
+ *         description: Lỗi dữ liệu không hợp lệ
+ *       '404':
+ *         description: Không tìm thấy sản phẩm
+ *       '500':
+ *         description: Lỗi server
+ */
+/**
+ * @swagger
+ * /api/v1/products/{id}:
+ *   delete:
+ *     summary: "OWNER/ADMIN - Xóa sản phẩm"
+ *     tags:
+ *       - Products
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của sản phẩm cần xóa
+ *     responses:
+ *       '200':
+ *         description: Sản phẩm đã được xóa thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Sản phẩm đã được xóa thành công"
+ *       '404':
+ *         description: Không tìm thấy sản phẩm
+ *       '500':
+ *         description: Lỗi server
  */

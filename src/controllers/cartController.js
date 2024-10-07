@@ -21,7 +21,7 @@ const getCartInfo = async (customerID) => {
 
   // Get product details
   const productIds = cartProducts.map((cp) => cp.product_id);
-  const products = await Product.find({ _id: { $in: productIds } }).select(
+  const products = await Product.findWithDeleted({ _id: { $in: productIds } }).select(
     "name price imageUrl _id promotionalPrice"
   );
 

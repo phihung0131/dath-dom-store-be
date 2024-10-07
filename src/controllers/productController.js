@@ -246,12 +246,72 @@ const productsController = {
 
   // Cập nhật sản phẩm
   updateProduct: async (req, res) => {
-    // logic cập nhật sản phẩm
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+
+      // Validate category if it's being updated
+      if (updateData.categoryId) {
+        const category = await Category.findById(updateData.categoryId);
+        if (!category) {
+          return sendResponse(res, 400, "Danh mục không tồn tại");
+        }
+        updateData.category = category._id;
+        delete updateData.categoryId;
+      }
+
+      // Parse infos if it's a string
+      if (typeof updateData.infos === "string") {
+        updateData.infos = JSON.parse(updateData.infos);
+      }
+
+      // Find the product and update it
+      const updatedProduct = await Product.findByIdAndUpdate(
+        id,
+        { $set: updateData },
+        { new: true, runValidators: true }
+      ).populate({ path: "category", select: "name -_id" });
+
+      if (!updatedProduct) {
+        return sendResponse(res, 404, "Sản phẩm không tồn tại");
+      }
+
+      // Transform the updated product data
+      const transformedProduct = transformProductData(updatedProduct);
+
+      return sendResponse(
+        res,
+        200,
+        "Sản phẩm đã được cập nhật thành công",
+        transformedProduct
+      );
+    } catch (error) {
+      console.error(error);
+      return sendResponse(res, 500, "Có lỗi xảy ra khi cập nhật sản phẩm", {
+        error: error.toString(),
+      });
+    }
   },
 
   // Xóa sản phẩm
   deleteProduct: async (req, res) => {
-    // logic xóa sản phẩm
+    try {
+      const { id } = req.params;
+
+      // Use the soft delete method provided by mongoose-delete
+      const deletedProduct = await Product.delete({ _id: id });
+
+      if (!deletedProduct) {
+        return sendResponse(res, 404, "Sản phẩm không tồn tại");
+      }
+
+      return sendResponse(res, 200, "Sản phẩm đã được xóa thành công");
+    } catch (error) {
+      console.error(error);
+      return sendResponse(res, 500, "Có lỗi xảy ra khi xóa sản phẩm", {
+        error: error.toString(),
+      });
+    }
   },
 
   updateProductTotalRate: async (productId) => {
