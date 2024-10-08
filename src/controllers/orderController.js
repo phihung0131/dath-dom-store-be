@@ -282,6 +282,84 @@ const orderController = {
       );
     }
   },
+
+  getAllOrders: async (req, res) => {
+    try {
+      const customerId = req.user._id;
+      const orders = await Order.find({ customerId }).sort({ createdAt: -1 });
+
+      const ordersWithDetails = await Promise.all(
+        orders.map(async (order) => {
+          const orderProducts = await OrderProduct.find({
+            orderId: order._id,
+          }).populate("productId", "_id name price imageUrl promotionalPrice");
+
+          orderProducts.forEach((orderProduct) => {
+            orderProduct.productId.imageUrl =
+              orderProduct.productId.imageUrl[0];
+          });
+
+          const orderVoucher = await OrderVoucher.findOne({
+            orderId: order._id,
+          }).populate("voucherId");
+
+          return {
+            ...order._doc,
+            products: orderProducts,
+            voucher: orderVoucher,
+          };
+        })
+      );
+
+      sendResponse(res, 200, "Lấy danh sách đơn hàng thành công", {
+        orders: ordersWithDetails,
+      });
+    } catch (error) {
+      console.error(error);
+      sendResponse(res, 500, "Lỗi hệ thống khi lấy danh sách đơn hàng", {
+        error: error.toString(),
+      });
+    }
+  },
+
+  getAOrder: async (req, res) => {
+    try {
+      const orderId = req.params.id;
+      const customerId = req.user._id;
+
+      const order = await Order.findOne({ _id: orderId, customerId });
+
+      if (!order) {
+        return sendResponse(res, 404, "Không tìm thấy đơn hàng");
+      }
+
+      const orderProducts = await OrderProduct.find({ orderId }).populate(
+        "productId",
+        "_id name price imageUrl promotionalPrice"
+      );
+
+      orderProducts.forEach((orderProduct) => {
+        orderProduct.productId.imageUrl = orderProduct.productId.imageUrl[0];
+      });
+
+      const orderVoucher = await OrderVoucher.findOne({ orderId }).populate(
+        "voucherId"
+      );
+
+      const orderDetails = {
+        ...order._doc,
+        products: orderProducts,
+        voucher: orderVoucher,
+      };
+
+      sendResponse(res, 200, "Lấy thông tin đơn hàng thành công", orderDetails);
+    } catch (error) {
+      console.error(error);
+      sendResponse(res, 500, "Lỗi hệ thống khi lấy thông tin đơn hàng", {
+        error: error.toString(),
+      });
+    }
+  },
 };
 
 module.exports = orderController;

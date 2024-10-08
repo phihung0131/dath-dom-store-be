@@ -10,6 +10,20 @@ router.post(
   orderController.create
 );
 
+// Xem tất cả đơn hàng của user
+router.get(
+  "/orders",
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  orderController.getAllOrders
+);
+
+// Xem 1 đơn hàng cụ thể
+router.get(
+  "/orders/:id",
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  orderController.getAOrder
+);
+
 module.exports = router;
 
 /**
@@ -61,6 +75,63 @@ module.exports = router;
  *               address:
  *                 type: string
  *                 example: "HCM"
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/orders:
+ *   get:
+ *     summary: CUSTOMER - Lấy tất cả lấy đơn đã tạo
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/orders/{id}:
+ *   get:
+ *     summary: CUSTOMER - Get a specific order by ID
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The order ID
  *     responses:
  *       'XXX':
  *         content:

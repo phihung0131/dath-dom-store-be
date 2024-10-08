@@ -44,7 +44,7 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       min: [0, "Tổng tỷ lệ phải ít nhất là 0"],
       max: [5, "Tổng tỷ lệ không được vượt quá 5"],
-      default: 0,
+      default: 5,
     },
     infos: [
       {
