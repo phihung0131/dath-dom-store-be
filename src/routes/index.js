@@ -9,6 +9,7 @@ const promotionRoutes = require("./promotionRoutes");
 const orderRoutes = require("./orderRoutes")
 const paymentRoutes = require("./paymentRoutes")
 const userRoutes = require("./userRoutes")
+const supportRoutes = require("./supportRoutes");
 
 router.use("/", productRoutes);
 router.use("/", authRoutes);
@@ -18,5 +19,6 @@ router.use("/", promotionRoutes);
 router.use("/", orderRoutes);
 router.use("/", paymentRoutes);
 router.use("/", userRoutes);
+router.use("/", supportRoutes);
 
 module.exports = router;
