@@ -30,7 +30,7 @@ module.exports = router;
  * @swagger
  * /api/v1/users/profile:
  *   get:
- *     summary: View personal information
+ *     summary: OWNER/ADMIN/CUSTOMER - Xem thông tin cá nhân
  *     tags:
  *       - Users
  *     security:
@@ -55,7 +55,7 @@ module.exports = router;
  * @swagger
  * /api/v1/users/profile:
  *   put:
- *     summary: Update personal information
+ *     summary: OWNER/ADMIN/CUSTOMER - Sửa thông tin cá nhân
  *     tags:
  *       - Users
  *     security:
@@ -91,7 +91,7 @@ module.exports = router;
  * @swagger
  * /api/v1/users/change-password:
  *   put:
- *     summary: Change password
+ *     summary: OWNER/ADMIN/CUSTOMER - Thay đổi mật khẩu
  *     tags:
  *       - Users
  *     security:

@@ -211,7 +211,7 @@ module.exports = router;
  * @swagger
  * /api/v1/promotion/product/{productId}:
  *   get:
- *     summary: OWNER - Lấy khuyễn mãi của 1 sản phẩm
+ *     summary: OWNER/ADMIN - Lấy khuyễn mãi của 1 sản phẩm
  *     tags:
  *       - Promotion
  *     security:
