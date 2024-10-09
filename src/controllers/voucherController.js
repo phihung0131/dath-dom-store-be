@@ -15,7 +15,18 @@ const voucherController = {
       });
 
       await newVoucher.save();
-      sendResponse(res, 201, "Thêm voucher mới thành công", newVoucher);
+
+      const voucherData = {
+        voucherID: newVoucher._id,
+        code: newVoucher.code,
+        discountPercent: newVoucher.discountPercent,
+        expirationDate: newVoucher.expirationDate,
+        quantity: newVoucher.quantity,
+        createdAt: newVoucher.createdAt,
+      };
+      sendResponse(res, 201, "Thêm voucher mới thành công", {
+        voucher: voucherData,
+      });
     } catch (error) {
       console.error(error);
       if (error.code === 11000) {
@@ -37,13 +48,15 @@ const voucherController = {
         id,
         { discountPercent, expirationDate, quantity },
         { new: true, runValidators: true }
-      );
+      ).select("-deleted -updatedAt -__v");
 
       if (!updatedVoucher) {
         return sendResponse(res, 404, "Không tìm thấy voucher");
       }
 
-      sendResponse(res, 200, "Cập nhật voucher thành công", updatedVoucher);
+      sendResponse(res, 200, "Cập nhật voucher thành công", {
+        voucher: updatedVoucher,
+      });
     } catch (error) {
       console.error(error);
       sendResponse(res, 500, "Lỗi hệ thống khi cập nhật voucher", {
@@ -74,8 +87,8 @@ const voucherController = {
   // Get all vouchers
   getAllVouchers: async (req, res) => {
     try {
-      const vouchers = await Voucher.find();
-      sendResponse(res, 200, "Lấy danh sách voucher thành công", vouchers);
+      const vouchers = await Voucher.find().select("-deleted -updatedAt -__v");
+      sendResponse(res, 200, "Lấy danh sách voucher thành công", { vouchers });
     } catch (error) {
       console.error(error);
       sendResponse(res, 500, "Lỗi hệ thống khi lấy danh sách voucher", {
@@ -88,13 +101,15 @@ const voucherController = {
   getVoucher: async (req, res) => {
     try {
       const { id } = req.params;
-      const voucher = await Voucher.findById(id);
+      const voucher = await Voucher.findById(id).select(
+        "-deleted -updatedAt -__v"
+      );
 
       if (!voucher) {
         return sendResponse(res, 404, "Không tìm thấy voucher");
       }
 
-      sendResponse(res, 200, "Lấy thông tin voucher thành công", voucher);
+      sendResponse(res, 200, "Lấy thông tin voucher thành công", { voucher });
     } catch (error) {
       console.error(error);
       sendResponse(res, 500, "Lỗi hệ thống khi lấy thông tin voucher", {

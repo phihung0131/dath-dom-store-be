@@ -10,20 +10,42 @@ router.post(
   orderController.create
 );
 
-// Xem tất cả đơn hàng của user
+// Xem tất cả đơn hàng dành cho customer
 router.get(
   "/orders",
   [authMiddleware.verifyToken, authMiddleware.isCustomer],
-  orderController.getAllOrders
+  orderController.getAllOrdersForCustomer
 );
 
 // Xem 1 đơn hàng cụ thể
 router.get(
   "/orders/:id",
   [authMiddleware.verifyToken, authMiddleware.isCustomer],
-  orderController.getAOrder
+  orderController.getAOrderForCustomer
 );
 
+// Xem tất cả đơn hàng dành cho admin/owner
+router.get(
+  "/admin/orders",
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  orderController.getAllOrdersForAdmin
+);
+
+// Xem 1 đơn hàng cụ thể cho admin/owner
+router.get(
+  "/admin/orders/:id",
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  orderController.getAOrderForAdmin
+);
+
+// Cập nhật trạng thái đơn hàng
+router.put(
+  "/admin/orders/:id",
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  orderController.updateOrderStatus
+);
+
+// Cập nhật trạng thái đơn hàng
 module.exports = router;
 
 /**
@@ -132,6 +154,153 @@ module.exports = router;
  *         schema:
  *           type: string
  *         description: The order ID
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/admin/orders:
+ *   get:
+ *     summary: ADMIN/OWNER - Xem tất cả đơn hàng dành
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Vị trí trang (không có thì mặc định 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Số sản phẩm trong 1 trang (không có thì mặc định 10)
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         description: Lọc theo trạng thái (Success, Failure, Delivering, Order successful, Preparing goods, Waiting for payment)
+ *         example: Order successful
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: tìm kiếm trong các thuộc tính name, phone, address của đơn hàng
+ *         example: 0345999999
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *         description: Lấy các đơn sau start date
+ *         example: 2024-10-20
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *         description: Lấy các đơn trước end date
+ *         example: 2024-10-20
+ *       - in: query
+ *         name: minTotal
+ *         schema:
+ *           type: string
+ *         description: Lấy các đơn trên minTotal
+ *         example: 500000
+ *       - in: query
+ *         name: maxTotal
+ *         schema:
+ *           type: string
+ *         description: Lấy các đơn dưới maxTotal
+ *         example: 500000000
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/admin/orders/{id}:
+ *   get:
+ *     summary: ADMIN/OWNER - Xem 1 đơn hàng cụ thể
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The order ID
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+/**
+ * @swagger
+ * /api/v1/admin/orders/{id}:
+ *   put:
+ *     summary: ADMIN/OWNER - Cập nhật trạng thái của đơn hàng
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The order ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 description: (Success, Failure, Delivering, Order successful, Preparing goods, Waiting for payment)
+ *                 example: "Success"
  *     responses:
  *       'XXX':
  *         content:

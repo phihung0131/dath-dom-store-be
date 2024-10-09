@@ -229,12 +229,24 @@ const productsController = {
       // Lưu sản phẩm vào database
       await newProduct.save();
 
-      return sendResponse(
-        res,
-        201,
-        "Sản phẩm đã được tạo thành công",
-        newProduct
-      );
+      // const newProductData = {
+      //   productID: newProduct._id,
+      //   name: newProduct.name,
+      //   description: newProduct.description,
+      //   price: newProduct.price,
+      //   imageUrl: newProduct.imageUrl,
+      //   category: newProduct.category,
+      //   totalRate: newProduct.totalRate,
+      //   infos: newProduct.infos,
+      //   createdAt: newProduct.createdAt,
+      // };
+
+      // Transform the updated product data
+      const transformedProduct = transformProductData(newProduct);
+
+      return sendResponse(res, 201, "Sản phẩm đã được tạo thành công", {
+        product: transformedProduct,
+      });
     } catch (error) {
       console.error(error);
 
@@ -279,12 +291,9 @@ const productsController = {
       // Transform the updated product data
       const transformedProduct = transformProductData(updatedProduct);
 
-      return sendResponse(
-        res,
-        200,
-        "Sản phẩm đã được cập nhật thành công",
-        transformedProduct
-      );
+      return sendResponse(res, 200, "Sản phẩm đã được cập nhật thành công", {
+        product: transformedProduct,
+      });
     } catch (error) {
       console.error(error);
       return sendResponse(res, 500, "Có lỗi xảy ra khi cập nhật sản phẩm", {

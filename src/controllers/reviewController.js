@@ -11,12 +11,18 @@ const reviewController = {
       // Check if the user has already reviewed this product
       const existingReview = await Review.findOne({ customer, product });
       if (existingReview) {
-        return sendResponse(
-          res,
-          400,
-          "Bạn đã đánh giá sản phẩm này rồi",
-          existingReview
-        );
+        const reviewData = {
+          reviewID: existingReview._id,
+          customerID: existingReview.customer,
+          productID: existingReview.product,
+          comment: existingReview.comment,
+          rating: existingReview.rating,
+          createdAt: existingReview.createdAt,
+        };
+
+        return sendResponse(res, 400, "Bạn đã đánh giá sản phẩm này rồi", {
+          review: reviewData,
+        });
       }
 
       const newReview = new Review({
@@ -28,10 +34,19 @@ const reviewController = {
 
       await newReview.save();
 
+      const reviewData = {
+        reviewID: newReview._id,
+        customerID: newReview.customer,
+        productID: newReview.product,
+        comment: newReview.comment,
+        rating: newReview.rating,
+        createdAt: newReview.createdAt,
+      };
+
       // Update product's totalRate
       await productsController.updateProductTotalRate(product);
 
-      sendResponse(res, 201, "Tạo Review thành công", newReview);
+      sendResponse(res, 201, "Tạo Review thành công", { review: reviewData });
     } catch (error) {
       sendResponse(res, 400, "Lỗi tạo Review", error.toString());
     }
@@ -59,7 +74,16 @@ const reviewController = {
       // Update product's totalRate
       await productsController.updateProductTotalRate(review.product);
 
-      sendResponse(res, 200, "Sửa Review thành công", review);
+      const reviewData = {
+        reviewID: review._id,
+        customerID: review.customer,
+        productID: review.product,
+        comment: review.comment,
+        rating: review.rating,
+        createdAt: review.createdAt,
+      };
+
+      sendResponse(res, 200, "Sửa Review thành công", { review: reviewData });
     } catch (error) {
       sendResponse(res, 400, "Lỗi sửa Review", error.toString());
     }

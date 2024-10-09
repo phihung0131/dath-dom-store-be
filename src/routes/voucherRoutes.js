@@ -20,35 +20,35 @@ router.put(
 // Xóa voucher
 router.delete(
   "/vouchers/:id",
-  // [authMiddleware.verifyToken, authMiddleware.isOwner],
+  [authMiddleware.verifyToken, authMiddleware.isOwner],
   voucherController.deleteVoucher
 );
 
 // Lấy tất cả voucher
 router.get(
   "/vouchers",
-  // [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
   voucherController.getAllVouchers
 );
 
 // Lấy một voucher cụ thể
 router.get(
   "/vouchers/:id",
-  // [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
   voucherController.getVoucher
 );
 
 // Thống kê số liệu voucher
 router.get(
   "/vouchers/:id/stats",
-  // [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
   voucherController.getVoucherStats
 );
 
 // Xóa các voucher hết hạn
 router.post(
   "/vouchers/deactivate-expired",
-  // [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
   voucherController.deactivateExpiredVouchers
 );
 

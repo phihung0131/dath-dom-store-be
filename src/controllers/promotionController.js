@@ -23,8 +23,21 @@ const promotionController = {
         endDate,
       });
 
+      const newPromotionData = {
+        _id: newPromotion._id,
+        productID: newPromotion.product,
+        name: newPromotion.name,
+        description: newPromotion.description,
+        discountPercent: newPromotion.discountPercent,
+        startDate: newPromotion.startDate,
+        endDate: newPromotion.endDate,
+        createdAt: newPromotion.createdAt,
+      };
+
       await newPromotion.save();
-      sendResponse(res, 201, "Tạo khuyến mãi thành công", newPromotion);
+      sendResponse(res, 201, "Tạo khuyến mãi thành công", {
+        promotion: newPromotionData,
+      });
     } catch (error) {
       sendResponse(res, 400, "Lõi tạo khuyến mãi", error.toString());
     }
@@ -37,12 +50,12 @@ const promotionController = {
       const promotion = await Promotion.findByIdAndUpdate(id, update, {
         new: true,
         runValidators: true,
-      });
+      }).select("-deleted -updatedAt -__v");
       if (!promotion) {
         return sendResponse(res, 404, "Khuyến mãi không tồn tại");
       }
 
-      sendResponse(res, 200, "Sửa khuyễn mãi thành công", promotion);
+      sendResponse(res, 200, "Sửa khuyễn mãi thành công", {promotion});
     } catch (error) {
       sendResponse(res, 400, "Lõi sửa khuyến mãi", error.toString());
     }
@@ -69,7 +82,8 @@ const promotionController = {
       // Tìm tất cả các khuyến mãi và sắp xếp theo startDate tăng dần (sớm trước, muộn sau)
       const promotions = await Promotion.find()
         .populate("product", "name _id")
-        .sort({ startDate: 1, endDate: 1 }); // 1 là tăng dần, -1 là giảm dần
+        .sort({ startDate: 1, endDate: 1 })
+        .select("-deleted -updatedAt -__v"); // 1 là tăng dần, -1 là giảm dần
 
       sendResponse(res, 200, "Lấy tất cả khuyến mãi thành công", {
         promotions,
@@ -89,10 +103,12 @@ const promotionController = {
       }
 
       // Tìm các khuyến mãi của sản phẩm và sắp xếp theo startDate tăng dần
-      const promotions = await Promotion.find({ product: productId }).sort({
-        startDate: 1,
-        endDate: 1,
-      });
+      const promotions = await Promotion.find({ product: productId })
+        .sort({
+          startDate: 1,
+          endDate: 1,
+        })
+        .select("-__v -updatedAt -deleted");
 
       sendResponse(res, 200, "Lấy khuyến mãi của một sản phẩm thành công", {
         promotions,

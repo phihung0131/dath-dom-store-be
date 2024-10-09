@@ -8,14 +8,14 @@ const userController = {
     try {
       const userId = req.user._id;
       const user = await User.findById(userId).select(
-        "-password -socialAccounts"
+        "-password -socialAccounts -updatedAt -__v -deleted"
       );
 
       if (!user) {
         return sendResponse(res, 404, "Không tìm thấy người dùng");
       }
 
-      sendResponse(res, 200, "Lấy thông tin cá nhân thành công", user);
+      sendResponse(res, 200, "Lấy thông tin cá nhân thành công", { user });
     } catch (error) {
       console.error(error);
       sendResponse(res, 500, "Lỗi hệ thống khi lấy thông tin cá nhân", {
@@ -34,18 +34,15 @@ const userController = {
         userId,
         { name, address },
         { new: true, runValidators: true }
-      ).select("-password -socialAccounts");
+      ).select("-password -socialAccounts -updatedAt -__v -deleted");
 
       if (!updatedUser) {
         return sendResponse(res, 404, "Không tìm thấy người dùng");
       }
 
-      sendResponse(
-        res,
-        200,
-        "Cập nhật thông tin cá nhân thành công",
-        updatedUser
-      );
+      sendResponse(res, 200, "Cập nhật thông tin cá nhân thành công", {
+        user: updatedUser,
+      });
     } catch (error) {
       console.error(error);
       sendResponse(res, 500, "Lỗi hệ thống khi cập nhật thông tin cá nhân", {
