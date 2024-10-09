@@ -208,6 +208,6 @@ const cartsController = {
       sendResponse(res, 500, 'Error adding product to cart', error.toString());
     }
   },
-};
+};  
 
 module.exports = cartsController;
