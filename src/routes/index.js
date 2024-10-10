@@ -6,11 +6,12 @@ const authRoutes = require("./authRoutes");
 const cartRoutes = require("./cartRoutes");
 const reviewRoutes = require("./reviewRoutes");
 const promotionRoutes = require("./promotionRoutes");
-const orderRoutes = require("./orderRoutes")
-const paymentRoutes = require("./paymentRoutes")
-const userRoutes = require("./userRoutes")
+const orderRoutes = require("./orderRoutes");
+const paymentRoutes = require("./paymentRoutes");
+const userRoutes = require("./userRoutes");
 const supportRoutes = require("./supportRoutes");
-const voucherRoutes = require("./voucherRoutes")
+const voucherRoutes = require("./voucherRoutes");
+const reportRoutes = require("./reportRoutes");
 
 router.use("/", productRoutes);
 router.use("/", authRoutes);
@@ -22,5 +23,6 @@ router.use("/", paymentRoutes);
 router.use("/", userRoutes);
 router.use("/", supportRoutes);
 router.use("/", voucherRoutes);
+router.use("/", reportRoutes);
 
 module.exports = router;
