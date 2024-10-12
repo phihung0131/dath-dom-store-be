@@ -58,6 +58,7 @@ module.exports = router;
  *     security:
  *       - bearerAuth: []
  *     requestBody:
+ *       description: paymentMethod - COD/MOMO/ZALO
  *       required: true
  *       content:
  *         application/json:
@@ -292,6 +293,7 @@ module.exports = router;
  *         description: The order ID
  *     requestBody:
  *       required: true
+ *       description: status - (Success, Failure, Delivering, Order successful, Preparing goods, Waiting for payment)
  *       content:
  *         application/json:
  *           schema:
@@ -299,7 +301,6 @@ module.exports = router;
  *             properties:
  *               status:
  *                 type: string
- *                 description: (Success, Failure, Delivering, Order successful, Preparing goods, Waiting for payment)
  *                 example: "Success"
  *     responses:
  *       'XXX':
