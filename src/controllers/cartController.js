@@ -5,7 +5,8 @@ const CartProduct = require("../models/CartProduct");
 const Product = require("../models/Product");
 require("dotenv").config();
 const getCartInfo = async (customerID) => {
-  const cart = await Cart.findOne({ customer_id: customerID }).select("customer_id _id total");
+  const cart = await Cart.findOne({ customer_id: customerID }).select("customer_id _id total ");
+  
   if (!cart) {
     newCart = new Cart({
       customer_id: customerID,
@@ -51,7 +52,7 @@ const getCartInfo = async (customerID) => {
   cart.total = total;
   await cart.save();
 
-  return { cart: { ...cart._doc, productInfo }, total };
+  return { cart: { ...cart._doc, productInfo } };
 };
 
 const cartsController = {

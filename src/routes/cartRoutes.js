@@ -84,7 +84,7 @@ router.put('/carts',
  * @swagger
  * /api/v1/carts:
  *   delete:
- *     summary: Xoa gio hang
+ *     summary: Xoa san pham gio hang
  *     tags:
  *       - Cart
  *     security:
