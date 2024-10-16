@@ -18,7 +18,7 @@ router.post(
   "/products",
   [
     authMiddleware.verifyToken,
-    authMiddleware.isCustomer,
+    authMiddleware.isAdminOrOwner,
     upload.array("images", 5),
   ],
   productsController.createProduct
@@ -27,7 +27,7 @@ router.post(
 // Cập nhật sản phẩm
 router.put(
   "/products/:id",
-  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
   productsController.updateProduct
 );
 
