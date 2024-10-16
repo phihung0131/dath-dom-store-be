@@ -34,7 +34,7 @@ router.put(
 // Xóa sản phẩm
 router.delete(
   "/products/:id",
-  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
   productsController.deleteProduct
 );
 
