@@ -8,9 +8,9 @@ const SupportTicketSchema = new mongoose.Schema(
         ref: "Customer",
         required: [true, "Thiếu Customer để tạo request"],
         },
-        admin: {
+        adminRespond: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Admin",
+        ref: "AdminRespond",
         },
         status: {
             type: String,

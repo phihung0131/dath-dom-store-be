@@ -21,7 +21,7 @@ const supportController = {
             const customerID = req.user._id;
             const newSupportTicket = new SupportTicket({
                 customer: customerID,
-                admin: null,
+                adminRespond: null,
                 subject,
                 status: "pending",
                 description,
@@ -74,7 +74,7 @@ const supportController = {
         // Lấy toàn bộ support ticket của
     getSupportAdmin: async (req, res) => {
         try {
-            const adminID = req.user._id;
+            const adminRespondID = req.user._id;
             const supportTickets = await SupportTicket.find().sort({ createdAt: -1 });
             sendResponse(res, 200, "Lấy dữ liệu Support Ticket thành công", supportTickets);
         } catch (error) {
@@ -84,7 +84,7 @@ const supportController = {
         //phan hoi support ticket
     respondSupportTicket: async (req, res) => {
         try {
-            const adminID = req.user._id;
+            const adminRespondID = req.user._id;
             const respond = req.body.respond;
             const supportTicketID = req.params.id;
             const supportTicket = await SupportTicket
@@ -95,13 +95,13 @@ const supportController = {
             if (supportTicket.status === 'finish' || supportTicket.status === 'update') {
                 supportTicket.respond = respond;
                 supportTicket.status = 'update';
-                supportTicket.admin = adminID;
+                supportTicket.adminRespond = adminRespondID;
                 await supportTicket.save();
                 return sendResponse(res, 200, "Update Phản hồi Support Ticket thành công", supportTicket);
             }
             supportTicket.respond = respond;
             supportTicket.status = 'finish';
-            supportTicket.admin = adminID;
+            supportTicket.adminRespond = adminRespondID;
             await supportTicket.save();
             return sendResponse(res, 200, "Phản hồi Support Ticket thành công", supportTicket);
         } catch (error) {

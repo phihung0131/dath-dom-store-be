@@ -12,6 +12,7 @@ const userRoutes = require("./userRoutes");
 const supportRoutes = require("./supportRoutes");
 const voucherRoutes = require("./voucherRoutes");
 const reportRoutes = require("./reportRoutes");
+const adminRoutes = require("./adminRoutes");
 
 router.use("/", productRoutes);
 router.use("/", authRoutes);
@@ -24,5 +25,6 @@ router.use("/", userRoutes);
 router.use("/", supportRoutes);
 router.use("/", voucherRoutes);
 router.use("/", reportRoutes);
+router.use("/", adminRoutes);
 
 module.exports = router;
