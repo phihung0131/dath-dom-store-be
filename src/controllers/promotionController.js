@@ -14,6 +14,11 @@ const promotionController = {
         endDate,
       } = req.body;
 
+      const productExist = await Product.findById(product);
+      if (!productExist) {
+        return sendResponse(res, 404, "Sản phẩm không tồn tại");
+      }
+
       const newPromotion = new Promotion({
         product,
         name,
@@ -55,7 +60,7 @@ const promotionController = {
         return sendResponse(res, 404, "Khuyến mãi không tồn tại");
       }
 
-      sendResponse(res, 200, "Sửa khuyễn mãi thành công", {promotion});
+      sendResponse(res, 200, "Sửa khuyễn mãi thành công", { promotion });
     } catch (error) {
       sendResponse(res, 400, "Lõi sửa khuyến mãi", error.toString());
     }
