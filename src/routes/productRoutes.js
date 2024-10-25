@@ -10,6 +10,9 @@ router.get("/products", productsController.getAllProducts);
 // Tìm kiếm và lọc sản phẩm với phân trang
 router.get("/products/search", productsController.searchAndFilterProducts);
 
+// Lấy tất cả sản phẩm có khuyễn mãi
+router.get("/products/promotional", productsController.getPromotionalProducts);
+
 // Lấy chi tiết sản phẩm theo ID
 router.get("/products/:id", productsController.getProduct);
 
@@ -429,4 +432,21 @@ module.exports = router;
  *         description: Không tìm thấy sản phẩm
  *       '500':
  *         description: Lỗi server
+ */
+/**
+ * @swagger
+ * /api/v1/products/promotional:
+ *   get:
+ *     summary: "ALL - Lấy tất cả sản phẩm có khuyễn mãi"
+ *     tags:
+ *       - Products
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
  */

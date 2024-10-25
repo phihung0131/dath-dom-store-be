@@ -360,6 +360,29 @@ const productsController = {
       { promotionalPrice: null }
     );
   },
+
+  getPromotionalProducts: async (req, res) => {
+    try {
+      const products = await Product.find({ promotionalPrice: { $ne: null } });
+
+      const transformedProducts = products.map(transformProductData);
+      return sendResponse(
+        res,
+        200,
+        "Lấy dữ liệu sản phẩm khuyễn mãi thành công",
+        transformedProducts
+      );
+    } catch (error) {
+      sendResponse(
+        res,
+        500,
+        "Có lỗi xảy ra khi lấy dữ liệu sản phẩm khuyễn mãi",
+        {
+          error: error.toString(),
+        }
+      );
+    }
+  },
 };
 
 module.exports = productsController;
