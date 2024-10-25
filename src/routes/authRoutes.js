@@ -61,6 +61,9 @@ router.get("/auth/google/callback", (req, res, next) => {
   )(req, res, next);
 });
 
+// Lấy lại mật khẩu
+router.post("/forgot-password", authController.forgotPassword);
+
 //Test
 router.get(
   "/user-infos",
@@ -222,5 +225,27 @@ module.exports = router;
  *                   items:
  *                     type: object
  */
-
-
+/**
+ * @swagger
+ * /api/v1/forgot-password:
+ *   post:
+ *     summary: Quên mật khẩu => Gửi mật khẩu mới về email
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ */
