@@ -370,7 +370,7 @@ const productsController = {
         res,
         200,
         "Lấy dữ liệu sản phẩm khuyễn mãi thành công",
-        transformedProducts
+        { products: transformedProducts }
       );
     } catch (error) {
       sendResponse(
