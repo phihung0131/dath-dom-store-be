@@ -181,6 +181,20 @@ router.delete(
  *       - Support/Admin
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, finish, update]
+ *         description: Trạng thái của support ticket (e.g., pending, finish, update)
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [newest, oldest]
+ *           default: newest
+ *         description: Sắp xếp theo thời gian tạo mới nhất hoặc cũ nhất
  *     responses:
  *       'XXX':
  *         content:
@@ -252,4 +266,6 @@ router.put(
   [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
   supportController.respondSupportTicket
 );
+
 module.exports = router;
+
