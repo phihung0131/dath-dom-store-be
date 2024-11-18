@@ -4,7 +4,7 @@ const authMiddleware = require("../middlewares/auth");
 const supportController = require("../controllers/supportController");
 
 // Route for the customer-support page
-    // lay toan bo support ticket cua customer
+// lay toan bo support ticket cua customer
 /**
  * @swagger
  * /api/v1/customer/support-tickets:
@@ -31,9 +31,9 @@ const supportController = require("../controllers/supportController");
  *                     type: object
  */
 router.get(
-    "/customer/support-tickets",
-    [authMiddleware.verifyToken, authMiddleware.isCustomer],
-    supportController.getSupportCustomer
+  "/customer/support-tickets",
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  supportController.getSupportCustomer
 );
 /**
  * @swagger
@@ -73,11 +73,11 @@ router.get(
  *                   items:
  *                     type: object
  */
-    // tao support ticket moi
+// tao support ticket moi
 router.post(
-    "/customer/support-tickets",
-    [authMiddleware.verifyToken, authMiddleware.isCustomer],
-    supportController.createSupportTicket
+  "/customer/support-tickets",
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  supportController.createSupportTicket
 );
 /**
  * @swagger
@@ -125,11 +125,11 @@ router.post(
  *                   items:
  *                     type: object
  */
-    // sua support ticket
+// sua support ticket
 router.put(
-    "/customer/support-tickets/:id",
-    [authMiddleware.verifyToken, authMiddleware.isCustomer],
-    supportController.updateSupportTicket
+  "/customer/support-tickets/:id",
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  supportController.updateSupportTicket
 );
 /**
  * @swagger
@@ -164,11 +164,11 @@ router.put(
  *                   items:
  *                     type: object
  */
-    // xoa support ticket
+// xoa support ticket
 router.delete(
-    "/customer/support-tickets/:id",
-    [authMiddleware.verifyToken, authMiddleware.isCustomer],
-    supportController.deleteSupportTicket
+  "/customer/support-tickets/:id",
+  [authMiddleware.verifyToken, authMiddleware.isCustomer],
+  supportController.deleteSupportTicket
 );
 
 // Route for the admin-support page
@@ -197,11 +197,11 @@ router.delete(
  *                   items:
  *                     type: object
  */
-    // lay toan bo support ticket cua tat ca customer
+// lay toan bo support ticket cua tat ca customer
 router.get(
-    "/admin/support-tickets",
-    [authMiddleware.verifyToken, authMiddleware.isAdmin],
-    supportController.getSupportAdmin
+  "/admin/support-tickets",
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  supportController.getSupportAdmin
 );
 /**
  * @swagger
@@ -246,10 +246,10 @@ router.get(
  *                   items:
  *                     type: object
  */
-    // phan hoi support ticket
+// phan hoi support ticket
 router.put(
-    "/admin/support-tickets/:id",
-    [authMiddleware.verifyToken, authMiddleware.isAdmin],
-    supportController.respondSupportTicket
+  "/admin/support-tickets/:id",
+  [authMiddleware.verifyToken, authMiddleware.isAdminOrOwner],
+  supportController.respondSupportTicket
 );
 module.exports = router;

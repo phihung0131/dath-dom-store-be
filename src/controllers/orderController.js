@@ -400,7 +400,7 @@ const orderController = {
         minTotal,
         maxTotal,
       } = req.query;
-      const sortOrder = req.query.sortOrder === "desc" ? -1 : 1;
+      const sortOrder = req.query.sortOrder === "desc" ? 1 : -1;
       const skip = (page - 1) * limit;
 
       // Build the query object
@@ -441,7 +441,14 @@ const orderController = {
         .populate({ path: "customerId", select: "name _id" })
         .select("-updatedAt -__v -deleted ");
 
+      const totalOrders = await Order.countDocuments(query);
+      const currentPage = parseInt(page);
+      const totalPages = Math.ceil(totalOrders / limit);
+
       sendResponse(res, 200, "Lấy danh sách đơn hàng thành công", {
+        totalOrders,
+        currentPage,
+        totalPages,
         orders: orders,
       });
     } catch (error) {
