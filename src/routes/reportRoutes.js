@@ -48,7 +48,7 @@ router.get("/reports/revenue/:period",
  *                     type: object
  */
     // phan tich doanh thu theo danh muc san pham
-    router.get("/reports/revenue-by-category/:period",authMiddleware.verifyToken,authMiddleware.isOwner,
+    router.get("/reports/revenue-by-category/:period",authMiddleware.verifyToken,authMiddleware.isAdminOrOwner,
         reportController.getRevenueByCategory);
 /**
  * @swagger
@@ -84,7 +84,7 @@ router.get("/reports/revenue/:period",
  *                     type: object
  */
     // phan tich hieu qua cua chuong trinh khuyen mai
-    router.get("/reports/promotion-effectiveness/:period",authMiddleware.verifyToken,authMiddleware.isOwner,
+    router.get("/reports/promotion-effectiveness/:period",authMiddleware.verifyToken,authMiddleware.isAdminOrOwner,
         reportController.getPromotionEffectiveness);
     // tong quan kinh doanh
 /**
@@ -120,7 +120,7 @@ router.get("/reports/revenue/:period",
  *                   items:
  *                     type: object
  */
-    router.get("/reports/business-overview/:period",authMiddleware.verifyToken,authMiddleware.isOwner,
+    router.get("/reports/business-overview/:period",authMiddleware.verifyToken,authMiddleware.isAdminOrOwner,
         reportController.getBusinessOverview);
 module.exports = router;
 
