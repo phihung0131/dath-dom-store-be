@@ -1,6 +1,8 @@
 const CryptoJS = require("crypto-js");
 const sendResponse = require("../helper/sendResponse");
 const Order = require("../models/Order");
+const CartProduct = require("../models/CartProduct");
+const Cart = require("../models/Cart");
 const OrderProduct = require("../models/OrderProduct");
 const OrderVoucher = require("../models/OrderVoucher");
 const Voucher = require("../models/Voucher");
@@ -191,6 +193,9 @@ const orderController = {
         },
       };
 
+      const cart = await Cart.findOne({ customer_id: req.user._id });
+      await CartProduct.deleteMany({ cart_id: cart._id });
+
       sendResponse(res, 200, "Tạo đơn hàng thành công", {
         order: orderData,
       });
@@ -358,7 +363,11 @@ const orderController = {
       }
 
       const orderProducts = await OrderProduct.find({ orderId })
-        .populate("productId", "_id name price imageUrl promotionalPrice")
+        .populate({
+          path: "productId",
+          select: "_id name price imageUrl promotionalPrice",
+          options: { withDeleted: true },
+        })
         .select("-orderId -createdAt -updatedAt -__v")
         .lean();
 
@@ -368,7 +377,11 @@ const orderController = {
       });
 
       const orderVoucher = await OrderVoucher.findOne({ orderId })
-        .populate("voucherId", "_id code discountPercent")
+        .populate({
+          path: "voucherId",
+          select: "_id code discountPercent",
+          options: { withDeleted: true },
+        })
         .select("_id ");
 
       const orderDetails = {
@@ -475,11 +488,16 @@ const orderController = {
         .populate({
           path: "productId",
           select: "_id name price promotionalPrice",
+          options: { withDeleted: true },
         })
         .select("-deleted -updatedAt -__v -createdAt -orderId");
 
       const orderVoucher = await OrderVoucher.findOne({ orderId })
-        .populate("voucherId", "-deleted -updatedAt -createdAt -__v")
+        .populate({
+          path: "voucherId",
+          select: "-deleted -updatedAt -createdAt -__v",
+          options: { withDeleted: true },
+        })
         .select("-deleted -updatedAt -__v -createdAt -orderId");
 
       const payment = await Payment.findOne({ orderId }).select(
