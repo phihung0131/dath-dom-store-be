@@ -88,6 +88,24 @@ const userController = {
       });
     }
   },
+
+  // Lấy danh sách ADMIN
+  getUserList: async (req, res) => {
+    const { role } = req.params;
+    try {
+      const users = await User.find({ role }).select(
+        "-password -__v -updatedAt -deleted -socialAccounts"
+      );
+      sendResponse(res, 200, `Lấy danh sách ${role} thành công`, {
+        users,
+      });
+    } catch (error) {
+      console.error(error);
+      sendResponse(res, 500, "Lỗi hệ thống khi lấy danh sách người dùng", {
+        error: error.toString(),
+      });
+    }
+  },
 };
 
 module.exports = userController;

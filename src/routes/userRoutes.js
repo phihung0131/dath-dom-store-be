@@ -24,7 +24,48 @@ router.put(
   userController.changePassword
 );
 
+// Lấy danh sách ADMIN/CUSTOMER/OWNER
+router.get(
+  "/users/:role",
+  [authMiddleware.verifyToken, authMiddleware.isOwner],
+  userController.getUserList
+);
+
 module.exports = router;
+
+/**
+ * @swagger
+ * /api/v1/users/{role}:
+ *   get:
+ *     summary: ADMIN/OWNER - Lấy danh sách người dùng theo vai trò
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: role
+ *         schema:
+ *           type: string
+ *         description: Vai trò của người dùng
+ *         require: true
+ *         example: ADMIN
+ *     responses:
+ *       'XXX':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
 
 /**
  * @swagger
