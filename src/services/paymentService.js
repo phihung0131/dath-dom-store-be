@@ -98,9 +98,8 @@ class PaymentAPI {
       key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
       endpoint: "https://sb-openapi.zalopay.vn/v2/create",
     };
-    const redirectUrl = process.env.HOSTNAME_FE + "/my-orders";
+    const redirecturl = process.env.HOSTNAME_FE + "/my-orders";
     // const redirecturl = process.env.HOSTNAME_FE + "/orders/" + orderId;
-    // const redirecturl = "https://www.youtube.com/watch?v=Bo5wSwq7ajg";
     const callback_url =
       process.env.HOSTNAME_BE + "/api/v1/payment/zalopay/callback";
 
