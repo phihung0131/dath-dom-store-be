@@ -12,7 +12,8 @@ class PaymentAPI {
     const secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
     const orderInfo = `Thanh toan don hang ${orderId} tai DomStore`;
     const partnerCode = "MOMO";
-    const redirectUrl = process.env.HOSTNAME_FE + "/orders/" + orderId;
+    const redirectUrl = process.env.HOSTNAME_FE + "/my-orders";
+    // const redirectUrl = process.env.HOSTNAME_FE + "/orders/" + orderId;
     const ipnUrl = process.env.HOSTNAME_BE + "/api/v1/payment/momo/callback";
     const requestType = "payWithMethod";
     const requestId = orderId;
@@ -97,7 +98,8 @@ class PaymentAPI {
       key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
       endpoint: "https://sb-openapi.zalopay.vn/v2/create",
     };
-    const redirecturl = process.env.HOSTNAME_FE + "/orders/" + orderId;
+    const redirectUrl = process.env.HOSTNAME_FE + "/my-orders";
+    // const redirecturl = process.env.HOSTNAME_FE + "/orders/" + orderId;
     // const redirecturl = "https://www.youtube.com/watch?v=Bo5wSwq7ajg";
     const callback_url =
       process.env.HOSTNAME_BE + "/api/v1/payment/zalopay/callback";
@@ -151,7 +153,6 @@ class PaymentAPI {
       throw new Error("Failed to create ZaloPay payment");
     }
   }
-
 }
 
 module.exports = PaymentAPI;
